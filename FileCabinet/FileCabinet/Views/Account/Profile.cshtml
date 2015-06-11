@@ -1,0 +1,24 @@
+﻿@model FileCabinet.Models.UserProfile
+
+@using (Html.BeginForm())
+{
+    <div class="form-group">
+        @Html.LabelFor(model => model.Username)
+        @Html.DisplayFor(model => model.Username)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Email)
+        @Html.DisplayFor(model => model.Email)
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.DateOfBirth)
+        @Html.DisplayFor(model => model.DateOfBirth)
+    </div>
+    <div>
+        @Html.ActionLink("Мои публикации", "Index", "Articles", null, new { @class="btn btn-default" })
+    </div>
+    <div>
+        @Html.ActionLink("Изменить профиль", "Edit", "Account", null, new { @class = "btn btn-default" })
+    </div>
+
+}

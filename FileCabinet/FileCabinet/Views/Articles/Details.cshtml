@@ -1,0 +1,32 @@
+﻿@model FileCabinet.Models.Article
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>@Html.DisplayFor(model => model.Title)</h4>
+    <hr />
+    <div>
+        @Html.Action("Content", "Home", new { article = Model })
+    </div>
+    <div>
+        Описание:<br/>
+        @Html.DisplayFor(model => model.Description)
+    </div>
+    <div>
+        <a href="~/UploadedFiles/@Model.FileName">Скачать</a>
+    </div>
+    <div>
+        @Html.LabelFor(model => Model.User.Username)
+        @Html.DisplayFor(model => Model.User.Username) |
+        @Html.LabelFor(model => Model.DateOfPublication)
+        @Html.DisplayFor(model => Model.DateOfPublication)
+    </div>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ArticleId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

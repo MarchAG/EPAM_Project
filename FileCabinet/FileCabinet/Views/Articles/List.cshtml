@@ -1,0 +1,43 @@
+﻿@model FileCabinet.Models.ArticlesViewModel
+@using FileCabinet.HtmlHelpers
+
+@{
+    ViewBag.Title = "List";
+}
+
+
+
+
+<div id="categories" class="col-xs-3">
+    @Html.Action("Menu", "Navigation")
+</div>
+<div class="col-xs-5">
+    <h2>Список постов</h2>
+    @using (Html.BeginForm())
+    {
+        foreach (var item in Model.Articles)
+        {
+            <div class="well">
+                <h4>
+                    @Html.ActionLink(item.Title, "Details", "Articles", new { id = item.ArticleId }, null)
+                </h4>
+
+                <div>
+                    @Html.Action("Content", "Home", new { article = item })
+                </div>
+                <div>
+                    <a href="~/UploadedFiles/@item.FileName">Скачать</a>
+                </div>
+                <div class="pull-right">
+                    @Html.LabelFor(model => item.User.Username)
+                    @Html.DisplayFor(model => item.User.Username) |
+                    @Html.LabelFor(model => item.DateOfPublication)
+                    @Html.DisplayFor(model => item.DateOfPublication)
+                </div>
+            </div>
+        }
+    }
+<div class="btn-group pull-right">
+    @Html.PageLinks(Model.Info, x => Url.Action("List", new { page = x , category = Model.CurrentCategory, searchString = Model.SearchString}))
+</div>
+</div>
