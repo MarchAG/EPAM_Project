@@ -7,7 +7,7 @@ using System.Web;
 
 namespace FileCabinet.Models
 {
-    public class CreateArt
+    public class CreateArticleViewModel
     {
         [Display(Name = "Заголовок статьи")]
         [Required(ErrorMessage = "Поле должно быть заполненым")]

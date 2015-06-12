@@ -31,7 +31,7 @@ namespace FileCabinet
 
             routes.MapRoute(
                 name: null,
-                url: "Articles/{category}/page{page}",
+                url: "Articles/Category/{category}/page{page}",
                 defaults: new { controller = "Articles", action = "List" },
                 constraints: new { page = @"\d+" });
 

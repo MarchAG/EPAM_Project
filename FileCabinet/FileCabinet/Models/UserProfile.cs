@@ -25,5 +25,7 @@ namespace FileCabinet.Models
         public string DateOfBirth { get; set; }
 
         public virtual List<Article> Articles { get; set; }
+
+        public virtual List<Mark> Marks { get; set; }
     }
 }

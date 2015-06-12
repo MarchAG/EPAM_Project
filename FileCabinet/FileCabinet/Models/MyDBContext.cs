@@ -19,7 +19,7 @@ namespace FileCabinet.Models
 
         public virtual DbSet<Article> Articles { get; set; }
         public virtual DbSet<UserProfile> Users { get; set; }
-
+        public virtual DbSet<Mark> Marks { get; set; }
         //protected override void OnModelCreating(DbModelBuilder modelBuilder)
         //{
         //    Database.SetInitializer(new MigrateDatabaseToLatestVersion<MyDBContext, Configuration>());

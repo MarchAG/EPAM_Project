@@ -5,9 +5,6 @@
     ViewBag.Title = "List";
 }
 
-
-
-
 <div id="categories" class="col-xs-3">
     @Html.Action("Menu", "Navigation")
 </div>
@@ -17,7 +14,7 @@
     {
         foreach (var item in Model.Articles)
         {
-            <div class="well">
+            <div class="well" style="overflow : hidden"> 
                 <h4>
                     @Html.ActionLink(item.Title, "Details", "Articles", new { id = item.ArticleId }, null)
                 </h4>
@@ -27,17 +24,61 @@
                 </div>
                 <div>
                     <a href="~/UploadedFiles/@item.FileName">Скачать</a>
-                </div>
+                </div>@*@item.Marks.FirstOrDefault(x => x.User.Username == User.Identity.Name)*@
                 <div class="pull-right">
                     @Html.LabelFor(model => item.User.Username)
                     @Html.DisplayFor(model => item.User.Username) |
                     @Html.LabelFor(model => item.DateOfPublication)
                     @Html.DisplayFor(model => item.DateOfPublication)
+                    </div>
+                <div class="rating pull-right" id="raiting" postId="@item.ArticleId">
+                    @Html.AverageRating(item)
+                    @*<div class="pull-right" style="margin-left:20px">@item.Marks.Average(x => x.Value)</div>*@
+                    @Html.RatingStars(item)
+                    @*<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>*@
                 </div>
-            </div>
+            </div>     
         }
     }
 <div class="btn-group pull-right">
     @Html.PageLinks(Model.Info, x => Url.Action("List", new { page = x , category = Model.CurrentCategory, searchString = Model.SearchString}))
 </div>
+
+    <div>
+        @Html.ActionLink("Добавить новый пост", "Create", "Articles", null, new { @class = "btn btn-default" })
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        $("#raiting > span").click(function () {
+            var ratingElem = $(this).parent('#raiting');
+            var spanIndex = $(this).index();
+            //alert($(this).parent('#raiting').attr('postId'));
+            $.ajax({
+                type: "POST",
+                url: '/Home/SetRating',
+                data: {
+                    postId: ratingElem.attr('postId'),
+                    rating: spanIndex
+                },
+                success: function (data) {
+                    ratingElem.children('div').text("|" + data.average + "|");
+                    ratingElem.children('span').each(function (index, val) {
+                        if (index >= -1 +  spanIndex) {
+                            $(this).text('\u2605');
+                            $(this).css('color', 'gold');
+                        }
+                        else {
+                            $(this).text('\u2606');
+                            $(this).css('color', 'black');
+                        }
+                    });
+                },
+                failed : function () {
+                    alert('failed');
+                }
+            });
+        });
+    </script>
+}

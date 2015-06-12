@@ -63,6 +63,7 @@ namespace FileCabinet.Controllers
         }
 
         // GET: Articles/Create
+        [Authorize]
         public ActionResult Create()
         {
             ViewBag.UserProfileId = new SelectList(db.Users, "UserProfileId", "Username");
@@ -75,7 +76,7 @@ namespace FileCabinet.Controllers
         //[Bind(Include = "ArticleId,UserProfileId,Title,PathToContent,ContentType,DateOfPublication")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create( CreateArt createArt)
+        public ActionResult Create( CreateArticleViewModel createArt)
         {
             int type =  -2;
             if (ModelState.IsValid && (type = createArt.GetFileType()) != -1)

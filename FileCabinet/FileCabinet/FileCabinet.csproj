@@ -167,11 +167,20 @@
     <Compile Include="Migrations\201506082221389_refact.Designer.cs">
       <DependentUpon>201506082221389_refact.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201506111146460_addMark.cs" />
+    <Compile Include="Migrations\201506111146460_addMark.Designer.cs">
+      <DependentUpon>201506111146460_addMark.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201506111759154_upMark.cs" />
+    <Compile Include="Migrations\201506111759154_upMark.Designer.cs">
+      <DependentUpon>201506111759154_upMark.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Article.cs" />
     <Compile Include="Models\ArticlesViewModel.cs" />
-    <Compile Include="Models\CreateArt.cs" />
+    <Compile Include="Models\CreateArticleViewModel.cs" />
     <Compile Include="Models\Login.cs" />
+    <Compile Include="Models\Mark.cs" />
     <Compile Include="Models\PagingInfo.cs" />
     <Compile Include="Models\Register.cs" />
     <Compile Include="Models\MyDBContext.cs" />
@@ -198,6 +207,7 @@
     </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\rating.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -215,6 +225,8 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\star-rating.js" />
+    <Content Include="Scripts\star-rating.min.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -276,6 +288,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201506082221389_refact.resx">
       <DependentUpon>201506082221389_refact.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506111146460_addMark.resx">
+      <DependentUpon>201506111146460_addMark.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201506111759154_upMark.resx">
+      <DependentUpon>201506111759154_upMark.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
