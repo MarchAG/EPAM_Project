@@ -1,4 +1,6 @@
 ﻿using FileCabinet.Models;
+using FileCabinet.Repository;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -12,7 +14,8 @@ namespace FileCabinet.Controllers
 {
     public class AccountController : Controller
     {
-        private MyDBContext db = new MyDBContext();
+        [Inject]
+        public IRepository Repository { get; set; }
         // GET: Account
         [HttpGet]
         public ActionResult Login()
@@ -64,7 +67,7 @@ namespace FileCabinet.Controllers
                 }
                 catch(MembershipCreateUserException exc)
                 {
-                    ModelState.AddModelError("", "Такой ник уже существует");
+                    ModelState.AddModelError("", "Такой псевдоним уже существует");
                     return View(reg);
                 }
                 
@@ -83,7 +86,7 @@ namespace FileCabinet.Controllers
         [HttpGet]
         public ActionResult Profile()
         {
-            var user = db.Users.First(x => x.Username == User.Identity.Name);
+            var user = Repository.GetAllUsers.FirstOrDefault(x => x.Username == User.Identity.Name);
             return View(user);
         }
 
@@ -91,8 +94,17 @@ namespace FileCabinet.Controllers
         [HttpGet]
         public ActionResult Edit()
         {
-            var user = db.Users.FirstOrDefault(x => x.Username == User.Identity.Name);
+            var user = Repository.GetAllUsers.FirstOrDefault(x => x.Username == User.Identity.Name);
             return View(user);
+        }
+
+        [ChildActionOnly]
+        public PartialViewResult PersonalArticles()
+        {
+            IEnumerable<Article> articles = Repository.GetAllArticles;
+            if(!Roles.GetRolesForUser(User.Identity.Name).Contains("Admin"))
+                articles = articles.Where(x => x.UserProfileId == WebSecurity.CurrentUserId);
+            return PartialView(articles);
         }
 
         [Authorize]
@@ -102,18 +114,15 @@ namespace FileCabinet.Controllers
         {
             if(ModelState.IsValid)
             {
-                db.Entry(user).State = EntityState.Modified;
-                db.SaveChanges();
+                Repository.UpdateUser(user);
                 return RedirectToAction("Profile");
             }
             return View(user);
         }
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
+            Repository.Dispose();
             base.Dispose(disposing);
         }
     }

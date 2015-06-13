@@ -1,5 +1,7 @@
 ﻿using FileCabinet.filters;
 using FileCabinet.Models;
+using FileCabinet.Repository;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,47 +14,13 @@ namespace FileCabinet.Controllers
     //[InitializeSimpleMembershipAttribute]
     public class HomeController : Controller
     {
-        MyDBContext uc = new MyDBContext();
+        //MyDbContext uc = new MyDbContext();
+        [Inject]
+        public IRepository Repository { get; set; }
+
         public ActionResult Index(int? id)
         {
-            if(id == null)
-                return View(uc.Articles.ToList());
-            return View(uc.Articles.Where(x => x.ArticleId == id).ToList());
-        }
-
-        [HttpPost]
-        [Authorize]
-        public ActionResult SetRating(int? postId, int? rating)
-        {
-            if (postId == null || rating == null)
-            {
-                //  Error
-                return Json(new { success = false, responseText = "Error." }, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                Mark mark = null;
-                if(uc.Marks.FirstOrDefault(x => x.ArticleId == (int)postId 
-                    && x.UserProfileId == WebSecurity.CurrentUserId) == null)
-                {
-                    mark = new Mark
-                    {
-                        ArticleId = (int)postId,
-                        UserProfileId = WebSecurity.CurrentUserId,
-                        Value = 6 - (int)rating
-                    };
-                    uc.Marks.Add(mark);
-                }
-                else
-                {
-                    uc.Marks.FirstOrDefault(x => x.ArticleId == (int)postId
-                    && x.UserProfileId == WebSecurity.CurrentUserId).Value = 6 - (int)rating;
-                }
-                uc.SaveChanges();
-                return Json(new { success = true, average = uc.Articles
-                    .FirstOrDefault(x => x.ArticleId == postId)
-                    .Marks.Average(x => x.Value) }, JsonRequestBehavior.AllowGet);
-            }   
+            return View();
         }
 
         public ActionResult About()
@@ -82,10 +50,6 @@ namespace FileCabinet.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                uc.Dispose();
-            }
             base.Dispose(disposing);
         }
     }

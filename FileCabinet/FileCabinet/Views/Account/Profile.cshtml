@@ -15,10 +15,9 @@
         @Html.DisplayFor(model => model.DateOfBirth)
     </div>
     <div>
-        @Html.ActionLink("Мои публикации", "Index", "Articles", null, new { @class="btn btn-default" })
+        @Html.ActionLink("Корректировать профиль", "Edit", "Account", null, new { @class = "btn btn-default" })
     </div>
-    <div>
-        @Html.ActionLink("Изменить профиль", "Edit", "Account", null, new { @class = "btn btn-default" })
-    </div>
-
+    <hr/>
+    <h2>Мои публикации</h2>
+    @Html.Action("PersonalArticles");
 }

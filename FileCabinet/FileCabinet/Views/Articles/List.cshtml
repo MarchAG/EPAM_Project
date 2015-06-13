@@ -8,13 +8,13 @@
 <div id="categories" class="col-xs-3">
     @Html.Action("Menu", "Navigation")
 </div>
-<div class="col-xs-5">
+<div class="col-xs-6">
     <h2>Список постов</h2>
     @using (Html.BeginForm())
     {
         foreach (var item in Model.Articles)
         {
-            <div class="well" style="overflow : hidden"> 
+            <div class="well" style="overflow : hidden">
                 <h4>
                     @Html.ActionLink(item.Title, "Details", "Articles", new { id = item.ArticleId }, null)
                 </h4>
@@ -23,26 +23,35 @@
                     @Html.Action("Content", "Home", new { article = item })
                 </div>
                 <div>
-                    <a href="~/UploadedFiles/@item.FileName">Скачать</a>
-                </div>@*@item.Marks.FirstOrDefault(x => x.User.Username == User.Identity.Name)*@
+                    @Html.ActionLink("Скачать", "Download", new { path = "~/UploadedFiles/" + item.FileName }, null)
+                </div>
                 <div class="pull-right">
                     @Html.LabelFor(model => item.User.Username)
                     @Html.DisplayFor(model => item.User.Username) |
                     @Html.LabelFor(model => item.DateOfPublication)
                     @Html.DisplayFor(model => item.DateOfPublication)
-                    </div>
-                <div class="rating pull-right" id="raiting" postId="@item.ArticleId">
-                    @Html.AverageRating(item)
-                    @*<div class="pull-right" style="margin-left:20px">@item.Marks.Average(x => x.Value)</div>*@
-                    @Html.RatingStars(item)
-                    @*<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>*@
                 </div>
-            </div>     
+                @if(@WebSecurity.CurrentUserId == -1)
+                {
+                <div class="rating-notActive" style="margin-left:300px">
+                    @Html.AverageRating(item)
+                    @Html.RatingStars(item)
+                </div>
+                }
+                else
+                {
+                    <div class="rating " style="margin-left:300px" id="raiting" postid="@item.ArticleId">
+                        @Html.AverageRating(item)
+                        @Html.RatingStars(item)
+                    </div>
+                }
+                
+            </div>
         }
     }
-<div class="btn-group pull-right">
-    @Html.PageLinks(Model.Info, x => Url.Action("List", new { page = x , category = Model.CurrentCategory, searchString = Model.SearchString}))
-</div>
+    <div class="btn-group pull-right">
+        @Html.PageLinks(Model.Info, x => Url.Action("List", new { page = x, category = Model.CurrentCategory, searchString = Model.SearchString }))
+    </div>
 
     <div>
         @Html.ActionLink("Добавить новый пост", "Create", "Articles", null, new { @class = "btn btn-default" })
@@ -57,7 +66,7 @@
             //alert($(this).parent('#raiting').attr('postId'));
             $.ajax({
                 type: "POST",
-                url: '/Home/SetRating',
+                url: '/Articles/SetRating',
                 data: {
                     postId: ratingElem.attr('postId'),
                     rating: spanIndex
@@ -65,7 +74,7 @@
                 success: function (data) {
                     ratingElem.children('div').text("|" + data.average + "|");
                     ratingElem.children('span').each(function (index, val) {
-                        if (index >= -1 +  spanIndex) {
+                        if (index >= -1 + spanIndex) {
                             $(this).text('\u2605');
                             $(this).css('color', 'gold');
                         }
@@ -75,7 +84,7 @@
                         }
                     });
                 },
-                failed : function () {
+                failed: function () {
                     alert('failed');
                 }
             });

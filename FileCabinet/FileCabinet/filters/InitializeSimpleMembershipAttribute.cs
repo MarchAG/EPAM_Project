@@ -29,11 +29,11 @@ namespace FileCabinet.filters
         {
             public SimpleMembershipInitializer()
             {
-                Database.SetInitializer<MyDBContext>(null);
+                Database.SetInitializer<MyDbContext>(null);
 
                 try
                 {
-                    using (var context = new MyDBContext())
+                    using (var context = new MyDbContext())
                     {
                         if (!context.Database.Exists())
                         {

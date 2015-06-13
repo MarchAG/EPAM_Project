@@ -8,9 +8,9 @@ using WebMatrix.WebData;
 
 namespace FileCabinet.Models
 {
-    public class UsersInitializer : DropCreateDatabaseAlways<MyDBContext>
+    public class UsersInitializer : DropCreateDatabaseAlways<MyDbContext>
     {
-        protected override void Seed(MyDBContext context)
+        protected override void Seed(MyDbContext context)
         {
             if (!Roles.RoleExists("Admin"))
                 Roles.CreateRole("Admin");

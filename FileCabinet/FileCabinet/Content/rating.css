@@ -13,3 +13,13 @@
    color : gold;
    position: absolute;
 }
+
+.rating-notActive {
+  unicode-bidi: bidi-override;
+  direction: rtl;
+}
+.rating-notActive > span {
+  display: inline-block;
+  position: relative;
+  width: 1.1em;
+}

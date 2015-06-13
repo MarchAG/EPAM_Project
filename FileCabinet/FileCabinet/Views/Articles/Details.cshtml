@@ -17,16 +17,18 @@
         @Html.DisplayFor(model => model.Description)
     </div>
     <div>
-        <a href="~/UploadedFiles/@Model.FileName">Скачать</a>
+        @Html.ActionLink("Скачать", "Download", new { path = "~/UploadedFiles/" + Model.FileName }, null)
     </div>
-    <div>
+    <div class="pull-right">
         @Html.LabelFor(model => Model.User.Username)
         @Html.DisplayFor(model => Model.User.Username) |
         @Html.LabelFor(model => Model.DateOfPublication)
         @Html.DisplayFor(model => Model.DateOfPublication)
     </div>
+    <div class="pull-right">
+        @Html.RatingStars(Model)
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ArticleId }) |
-    @Html.ActionLink("Back to List", "Index")
+<p class="bottom-left" style="margin-top:50px;">
+    @Html.ActionLink("Back to List", "List", null, new { @class="btn btn-default"})
 </p>

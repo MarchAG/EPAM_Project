@@ -9,7 +9,7 @@ namespace FileCabinet.Controllers
 {
     public class NavigationController : Controller
     {
-        private MyDBContext db = new MyDBContext();
+        private MyDbContext db = new MyDbContext();
         // GET: Navigation
         public PartialViewResult Menu(string category = null)
         {

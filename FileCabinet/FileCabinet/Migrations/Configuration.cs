@@ -7,14 +7,14 @@ namespace FileCabinet.Migrations
     using System.Web.Security;
     using WebMatrix.WebData;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<FileCabinet.Models.MyDBContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<FileCabinet.Models.MyDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
         }
 
-        protected override void Seed(FileCabinet.Models.MyDBContext context)
+        protected override void Seed(FileCabinet.Models.MyDbContext context)
         {
 
             //if (!Roles.RoleExists("Administrator"))

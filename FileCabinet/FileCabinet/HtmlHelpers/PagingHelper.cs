@@ -35,14 +35,9 @@ namespace FileCabinet.HtmlHelpers
         public static MvcHtmlString RatingStars(this HtmlHelper html,
                                              Article article)
         {
-            if (WebSecurity.CurrentUserId == -1)
-            {
-                TagBuilder tag = new TagBuilder("span");
-                tag.SetInnerText("Зарегистрируйся, чтобы поставить оценку");
-                return MvcHtmlString.Create(tag.ToString());
-            }
             StringBuilder result = new StringBuilder();
-            if(article.Marks.FirstOrDefault(x => x.UserProfileId == WebSecurity.CurrentUserId) == null)
+            if(article.Marks.FirstOrDefault(x => x.UserProfileId == WebSecurity.CurrentUserId) == null
+                && WebSecurity.CurrentUserId != -1)
                 for (int i = 1; i <= 5; i++)
                 {
                     TagBuilder tag = new TagBuilder("span");
@@ -84,7 +79,7 @@ namespace FileCabinet.HtmlHelpers
                 tag.SetInnerText("|0|");
             }
             tag.AddCssClass("pull-right");
-            tag.Attributes["style"] = "color:red;margin-left:20px;";
+            tag.Attributes["style"] = "color:red;margin-left:20px;margin-right:40px;";
             return MvcHtmlString.Create(tag.ToString());
         }
     }

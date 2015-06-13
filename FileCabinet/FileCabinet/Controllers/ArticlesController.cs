@@ -10,13 +10,18 @@ using FileCabinet.Models;
 using FileCabinet.filters;
 using System.IO;
 using System.Web.Security;
+using WebMatrix.WebData;
+using Ninject;
+using FileCabinet.Repository;
 
 namespace FileCabinet.Controllers
 {
     //[InitializeSimpleMembershipAttribute]
     public class ArticlesController : Controller
     {
-        private MyDBContext db = new MyDBContext();
+        //private MyDBContext db = new MyDBContext();
+        [Inject]
+        public IRepository Repository { get; set; }
         private int PageSize = 3;
         // GET: Articles
         public ActionResult List(string category, string searchString, int page = 1)
@@ -24,20 +29,20 @@ namespace FileCabinet.Controllers
             int typeOfFile = category == "Audio"? 2 : (category == "Video" ? 1 : 0);
             ArticlesViewModel articlesViewModel = new ArticlesViewModel
             {
-                Articles = db.Articles
+                Articles = Repository.GetAllArticles
                 .Where(x => category == null || x.ContentType == (ContentFileType)typeOfFile),
                 Info = new PagingInfo
                 {
                     CurrentPage = page,
                     PostsPerPage = PageSize,
-                    TotalArticles = category == null ? db.Articles.Count() : db.Articles.Where(x => x.ContentType == (ContentFileType)typeOfFile).Count()
+                    TotalArticles = category == null ? Repository.GetAllArticles.Count() : Repository.GetAllArticles.Where(x => x.ContentType == (ContentFileType)typeOfFile).Count()
                 },
                 CurrentCategory = category,
                 SearchString = searchString
             };
             if(!String.IsNullOrEmpty(searchString))
             {
-                articlesViewModel.Articles = db.Articles
+                articlesViewModel.Articles = Repository.GetAllArticles
                     .Where(x => x.Title.Contains(searchString) || x.User.Username.Contains(searchString));
                     //.Union(articlesViewModel.Articles.Where(x => x.Description.Contains(searchString))));
                 articlesViewModel.Info.TotalArticles = articlesViewModel.Articles.Count();
@@ -54,7 +59,7 @@ namespace FileCabinet.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Article article = db.Articles.Find(id);
+            Article article = Repository.FindArticleById((int)id);
             if (article == null)
             {
                 return HttpNotFound();
@@ -66,7 +71,7 @@ namespace FileCabinet.Controllers
         [Authorize]
         public ActionResult Create()
         {
-            ViewBag.UserProfileId = new SelectList(db.Users, "UserProfileId", "Username");
+            //ViewBag.UserProfileId = new SelectList(db.Users, "UserProfileId", "Username");
             return View();
         }
 
@@ -81,21 +86,21 @@ namespace FileCabinet.Controllers
             int type =  -2;
             if (ModelState.IsValid && (type = createArt.GetFileType()) != -1)
             {
-                var article = new Article();
-                article.DateOfPublication = DateTime.Now.ToString();
-                article.UserProfileId = db.Users.First(x => x.Username == User.Identity.Name).UserProfileId;
-                article.FileName = Guid.NewGuid().ToString() + Path.GetExtension(createArt.ContentFile.FileName);
-                article.ContentType = (ContentFileType)type;
-                article.Description = createArt.Description;
-                article.Title = createArt.Title;
+                var article = new Article
+                {
+                    DateOfPublication = DateTime.Now.ToString(),
+                    UserProfileId = WebSecurity.CurrentUserId,
+                    FileName = Guid.NewGuid().ToString() + Path.GetExtension(createArt.ContentFile.FileName),
+                    ContentType = (ContentFileType)type,
+                    Description = createArt.Description,
+                    Title = createArt.Title
+                };
                 string path = AppDomain.CurrentDomain.BaseDirectory + "UploadedFiles/";
-                if (article.FileName != null) createArt.ContentFile.SaveAs(Path.Combine(path, article.FileName));
-                db.Articles.Add(article);
-                db.SaveChanges();
+                if (article.FileName != null) 
+                    createArt.ContentFile.SaveAs(Path.Combine(path, article.FileName));
+                Repository.AddArticle(article);
                 return RedirectToAction("Index");
             }
-
-            //ViewBag.UserProfileId = new SelectList(db.Users, "UserProfileId", "Username", article.UserProfileId);
             return View(createArt);
         }
 
@@ -106,11 +111,14 @@ namespace FileCabinet.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Article article = db.Articles.Find(id);
+            Article article = Repository.FindArticleById((int)id);
+            
             if (article == null)
             {
                 return HttpNotFound();
             }
+            if (article.UserProfileId != WebSecurity.CurrentUserId)
+                return RedirectToAction("List");
             //ViewBag.UserProfileId = new SelectList(db.Users, "UserProfileId", "Username", article.UserProfileId);
             return View(article);
         }
@@ -120,16 +128,15 @@ namespace FileCabinet.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[Bind(Include = "ArticleId,UserProfileId,Title,FileName,ContentType,DateOfPublication, Description, User")]
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(Article article)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(article).State = EntityState.Modified;
-                db.SaveChanges();
+                Repository.UpdateArticle(article);
                 return RedirectToAction("Index");
             }
-            ViewBag.UserProfileId = new SelectList(db.Users, "UserProfileId", "Username", article.UserProfileId);
+            //ViewBag.UserProfileId = new SelectList(db.Users, "UserProfileId", "Username", article.UserProfileId);
             return View(article);
         }
 
@@ -140,11 +147,13 @@ namespace FileCabinet.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Article article = db.Articles.Find(id);
+            Article article = Repository.FindArticleById((int)id);
             if (article == null)
             {
                 return HttpNotFound();
             }
+            if (article.UserProfileId != WebSecurity.CurrentUserId)
+                return RedirectToAction("List");
             return View(article);
         }
 
@@ -153,19 +162,64 @@ namespace FileCabinet.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Article article = db.Articles.Find(id);
-            db.Articles.Remove(article);
-            db.SaveChanges();
+            Article article = Repository.FindArticleById(id);
+            Repository.DeleteArticle(article);
             FileInfo file = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "/UploadedFiles/" + article.FileName);
             file.Delete();
             return RedirectToAction("Index");
         }
+
+        public FileResult Download(string path)
+        {
+            //if (String.IsNullOrEmpty(path))
+
+            var extension = Path.GetExtension(path);
+            var filename = Path.GetFileName(path);
+            return File(path, extension, filename);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public ActionResult SetRating(int? postId, int? rating)
+        {
+            if (postId == null || rating == null)
+            {
+                //  Error
+                return Json(new { success = false, responseText = "Error." }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                Mark mark = null;
+                if (Repository.GetAllMarks.FirstOrDefault(x => x.ArticleId == (int)postId
+                    && x.UserProfileId == WebSecurity.CurrentUserId) == null)
+                {
+                    mark = new Mark
+                    {
+                        ArticleId = (int)postId,
+                        UserProfileId = WebSecurity.CurrentUserId,
+                        Value = 6 - (int)rating
+                    };
+                    Repository.AddMark(mark);
+                }
+                else
+                {
+                    Repository.GetAllMarks.FirstOrDefault(x => x.ArticleId == (int)postId
+                    && x.UserProfileId == WebSecurity.CurrentUserId).Value = 6 - (int)rating;
+                }
+                Repository.SaveChanges();
+                return Json(new
+                {
+                    success = true,
+                    average = Repository.GetAllArticles
+                    .FirstOrDefault(x => x.ArticleId == postId)
+                    .Marks.Average(x => x.Value)
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
+            Repository.Dispose();
             base.Dispose(disposing);
         }
     }

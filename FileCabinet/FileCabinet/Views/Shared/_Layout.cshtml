@@ -34,7 +34,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li style="font-size:x-large; color:yellowgreen">@Html.ActionLink(User.Identity.Name, "Profile", "Account")</li>
+                        <li style="font-size:x-large;">@Html.ActionLink(User.Identity.Name, "Profile", "Account",null, new { @style = "color:yellowgreen"})</li>
                         <li>@Html.ActionLink("Logout", "Logout", "Account")</li>
                         <li>@Html.ActionLink("Posts", "List", "Articles")</li>
                     }
