@@ -67,7 +67,7 @@ namespace FileCabinet.HtmlHelpers
             return MvcHtmlString.Create(result.ToString());
         }
         public static MvcHtmlString AverageRating(this HtmlHelper html,
-                                        Article article )
+                                        Article article, string style )
         {
             TagBuilder tag = new TagBuilder("div");
             try
@@ -78,8 +78,11 @@ namespace FileCabinet.HtmlHelpers
             {
                 tag.SetInnerText("|0|");
             }
-            tag.AddCssClass("pull-right");
-            tag.Attributes["style"] = "color:red;margin-left:20px;margin-right:40px;";
+            if (!String.IsNullOrEmpty(style))
+            {
+                tag.AddCssClass("pull-right");
+                tag.Attributes["style"] = style;
+            }
             return MvcHtmlString.Create(tag.ToString());
         }
     }

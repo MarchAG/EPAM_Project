@@ -8,7 +8,7 @@
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-inverse navbar-fixed-top" style="background-color:InactiveCaption">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -16,27 +16,31 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("File cabinet", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Posts", "List", "Articles")</li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                </ul>
+                <ul class="nav navbar-nav navbar-left" style="margin-left:12%">
                     <li>
                         @using (Html.BeginForm("List", "Articles", FormMethod.Get))
                         {
-                            <input type="text" id="searchString" name="searchString" placeholder="Conference" required="" />
-                            <input type="submit" value="Go!" />
+                            <div style="margin-top:5.5%">
+                                <input type="text" id="searchString" name="searchString" placeholder="Search..." required="" />
+                                <input type="submit" value="Search!" />
+                            </div>
                         }
                     </li>
-            </ul>
+                </ul>
                 <ul class="nav navbar-nav navbar-right">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li style="font-size:x-large;">@Html.ActionLink(User.Identity.Name, "Profile", "Account",null, new { @style = "color:yellowgreen"})</li>
+                        <li style="font-size:medium; margin-top:5.5%"><i style="color:black">Welcome, </i><i>@Html.ActionLink(User.Identity.Name, "Profile", "Account", null, new { @style = "color:yellowgreen" })</i><i style ="color:black">!!!</i></li>
                         <li>@Html.ActionLink("Logout", "Logout", "Account")</li>
-                        <li>@Html.ActionLink("Posts", "List", "Articles")</li>
+
                     }
                     else
                     {
@@ -44,8 +48,6 @@
                         <li>@Html.ActionLink("Register", "Register", "Account")</li>
                     }    
                 </ul>
-                    
-                
             </div>
         </div>
     </div>

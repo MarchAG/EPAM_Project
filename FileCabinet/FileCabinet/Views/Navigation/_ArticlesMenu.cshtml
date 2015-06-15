@@ -1,0 +1,28 @@
+﻿@model IEnumerable<string>
+
+@*@Html.ActionLink("All", "List", "Articles", null,
+    new { @class = "btn btn-block btn-default btn-lg" })
+
+@foreach (var link in Model)
+{
+    @Html.RouteLink(link, new{ 
+        controller = "Articles",
+        action = "List",
+        category = link,
+        page = 1
+    }, new
+    {
+        @class = "btn btn-block btn-default btn-lg"
+        + (link == ViewBag.Selected ? " btn-primary" : "")
+    })
+}*@
+<div class="sidebar-nav">
+    <div class="well" style="width:200px; padding: 8px 0;">
+        <ul class="nav nav-list text-center">
+            <li class="active"><a href="/Articles/List"><i class="icon-bar"></i> All</a></li>
+            <li><a href="/Articles/Category/@Model.ElementAt(0)"><i class="glyphicon glyphicon-music"></i> @Model.ElementAt(0)</a></li>
+            <li><a href="/Articles/Category/@Model.ElementAt(1)"><i class="glyphicon glyphicon-file"></i> @Model.ElementAt(1)</a></li>
+            <li><a href="/Articles/Category/@Model.ElementAt(2)"><i class="glyphicon glyphicon-film"></i> @Model.ElementAt(2)</a></li>
+        </ul>
+    </div>
+</div>

@@ -15,7 +15,7 @@ namespace FileCabinet.Controllers
         {
             ViewBag.Selected = category;
             IEnumerable<string> types = Enum.GetNames(typeof(ContentFileType)).OrderBy(x => x);
-            return PartialView(types);
+            return PartialView("_ArticlesMenu", types);
         }
     }
 }

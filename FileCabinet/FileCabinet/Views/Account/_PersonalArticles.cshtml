@@ -1,0 +1,38 @@
+﻿@model IEnumerable<FileCabinet.Models.Article>
+
+<h3 class="text-center">Публикации</h3>
+<div class="col-sm-10 col-lg-offset-1 toppad">
+    <table class="table table-responsive custab">
+        @Html.ActionLink("Create new", "Create", "Articles", null, new { @class = "btn btn-primary btn-xs pull-right" })
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>@Html.DisplayNameFor(model => model.Title)</th>
+                <th>Средний рейтинг</th>
+                <th>@Html.DisplayNameFor(model => model.DateOfPublication)</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => item.User.Username)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.AverageRating(item, "")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateOfPublication)
+                </td>
+                <td class="text-center">
+                    <a class='btn btn-info btn-xs' href="/Articles/Edit/@item.ArticleId"><span class="glyphicon glyphicon-edit"></span> Edit</a> <a href="/Articles/Delete/@item.ArticleId" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Del</a>
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>

@@ -84,9 +84,13 @@ namespace FileCabinet.Controllers
 
         [Authorize]
         [HttpGet]
-        public ActionResult Profile()
+        public ActionResult Profile(string category)
         {
             var user = Repository.GetAllUsers.FirstOrDefault(x => x.Username == User.Identity.Name);
+            if (category == "Info")
+                ViewBag.Categ = category;
+            else if (category == "Articles")
+                ViewBag.Categ = category;
             return View(user);
         }
 
@@ -99,12 +103,14 @@ namespace FileCabinet.Controllers
         }
 
         [ChildActionOnly]
-        public PartialViewResult PersonalArticles()
+        public PartialViewResult PartOfProfile(UserProfile user, string category)
         {
+            if (category == "Info")
+                return PartialView("_PersonalInfo", user);
             IEnumerable<Article> articles = Repository.GetAllArticles;
             if(!Roles.GetRolesForUser(User.Identity.Name).Contains("Admin"))
                 articles = articles.Where(x => x.UserProfileId == WebSecurity.CurrentUserId);
-            return PartialView(articles);
+            return PartialView("_PersonalArticles", articles);
         }
 
         [Authorize]

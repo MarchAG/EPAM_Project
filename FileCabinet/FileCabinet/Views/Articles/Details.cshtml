@@ -6,29 +6,60 @@
 
 <h2>Details</h2>
 
-<div>
-    <h4>@Html.DisplayFor(model => model.Title)</h4>
-    <hr />
-    <div>
-        @Html.Action("Content", "Home", new { article = Model })
-    </div>
-    <div>
-        Описание:<br/>
-        @Html.DisplayFor(model => model.Description)
-    </div>
-    <div>
-        @Html.ActionLink("Скачать", "Download", new { path = "~/UploadedFiles/" + Model.FileName }, null)
-    </div>
-    <div class="pull-right">
-        @Html.LabelFor(model => Model.User.Username)
-        @Html.DisplayFor(model => Model.User.Username) |
-        @Html.LabelFor(model => Model.DateOfPublication)
-        @Html.DisplayFor(model => Model.DateOfPublication)
-    </div>
-    <div class="pull-right">
-        @Html.RatingStars(Model)
-    </div>
-</div>
-<p class="bottom-left" style="margin-top:50px;">
-    @Html.ActionLink("Back to List", "List", null, new { @class="btn btn-default"})
-</p>
+        <div class="col-md-3"></div>
+        <div class="col-md-7">
+            <div id="postlist">
+
+                <div class="panel">
+                    <div class="panel-heading">
+                        <div class="text-center">
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <h3 class="pull-left">@Html.DisplayFor(model => model.Title)</h3>
+                                </div>
+                                <div class="col-sm-3">
+                                    <h4 class="pull-right">
+                                        <small><em>@Model.DateOfPublication</em></small>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        @Html.Action("Content", "Home", new { article = Model })
+                        <h5>Описание:</h5>
+                        @Model.Description
+                    </div>
+                    <div style="margin-left:3%">
+                        <a class='btn btn-primary btn-xs' href="~/UploadedFiles/@Model.FileName"><span class="glyphicon glyphicon-download"></span> Download</a>
+                    </div>
+                    @if (@WebSecurity.CurrentUserId == -1)
+                    {
+                        <div class="rating-notActive" style="margin-left:50%">
+                            @Html.AverageRating(Model, "color:red;margin-left:20px;margin-right:40px;")
+                            @Html.RatingStars(Model)
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="rating " style="margin-left:5%" id="raiting" postid="@Model.ArticleId">
+                            @Html.AverageRating(Model, "color:red;margin-left:20px;margin-right:40px;")
+                            @Html.RatingStars(Model)
+                        </div>
+                    }
+                    <div class="panel-footer">
+                        <span class="label label-default">@Enum.GetName(Model.ContentType.GetType(), Model.ContentType)</span> <span class="label label-info">@Model.User.Username</span>
+                    </div>
+                </div>
+            </div>
+            <div><a href="/Articles/List" id="loadmore" class="btn btn-primary">Back to list</a></div>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-1">
+        </div>
+
+@section Scripts {
+    <script src="~/Scripts/star-rating.js" type="text/javascript"></script>
+}

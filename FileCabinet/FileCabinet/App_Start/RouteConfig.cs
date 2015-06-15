@@ -31,6 +31,16 @@ namespace FileCabinet
 
             routes.MapRoute(
                 name: null,
+                url: "Account/Profile/",
+                defaults: new { controller = "Account", action = "Profile", category = "Info" });
+
+            routes.MapRoute(
+                name: null,
+                url: "Account/Profile/{category}",
+                defaults: new { controller = "Account", action = "Profile", category = "Info" });
+
+            routes.MapRoute(
+                name: null,
                 url: "Articles/Category/{category}/page{page}",
                 defaults: new { controller = "Articles", action = "List" },
                 constraints: new { page = @"\d+" });

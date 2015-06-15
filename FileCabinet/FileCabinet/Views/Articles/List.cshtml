@@ -5,89 +5,71 @@
     ViewBag.Title = "List";
 }
 
-<div id="categories" class="col-xs-3">
+<div id="categories" class="col-md-3">
     @Html.Action("Menu", "Navigation")
 </div>
-<div class="col-xs-6">
-    <h2>Список постов</h2>
-    @using (Html.BeginForm())
-    {
-        foreach (var item in Model.Articles)
+<h2>Список постов</h2>
+@using (Html.BeginForm())
+{
+    <div class="col-md-7">
+        @foreach (var item in Model.Articles)
         {
-            <div class="well" style="overflow : hidden">
-                <h4>
-                    @Html.ActionLink(item.Title, "Details", "Articles", new { id = item.ArticleId }, null)
-                </h4>
-
-                <div>
-                    @Html.Action("Content", "Home", new { article = item })
-                </div>
-                <div>
-                    @Html.ActionLink("Скачать", "Download", new { path = "~/UploadedFiles/" + item.FileName }, null)
-                </div>
-                <div class="pull-right">
-                    @Html.LabelFor(model => item.User.Username)
-                    @Html.DisplayFor(model => item.User.Username) |
-                    @Html.LabelFor(model => item.DateOfPublication)
-                    @Html.DisplayFor(model => item.DateOfPublication)
-                </div>
-                @if(@WebSecurity.CurrentUserId == -1)
-                {
-                <div class="rating-notActive" style="margin-left:300px">
-                    @Html.AverageRating(item)
-                    @Html.RatingStars(item)
-                </div>
-                }
-                else
-                {
-                    <div class="rating " style="margin-left:300px" id="raiting" postid="@item.ArticleId">
-                        @Html.AverageRating(item)
-                        @Html.RatingStars(item)
+            <div id="postlist">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <div class="text-center">
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <h3 class="pull-left">@Html.ActionLink(item.Title, "Details", "Articles", new { id = item.ArticleId }, null)</h3>
+                                </div>
+                                <div class="col-sm-3">
+                                    <h4 class="pull-right">
+                                        <small><em>@item.DateOfPublication</em></small>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                }
-                
+                    <div class="panel-body">
+                        @Html.Action("Content", "Home", new { article = item})
+                    </div>
+                    @if (@WebSecurity.CurrentUserId == -1)
+                    {
+                        <div class="rating-notActive" style="margin-left:50%">
+                            @Html.AverageRating(item, "color:red;margin-left:20px;margin-right:40px;")
+                            @Html.RatingStars(item)
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="rating " style="margin-left:5%" id="raiting" postid="@item.ArticleId">
+                            @Html.AverageRating(item, "color:red;margin-left:20px;margin-right:40px;")
+                            @Html.RatingStars(item)
+                        </div>
+                    }
+                    <div class="panel-footer">
+                        <span class="label label-default">@Enum.GetName(item.ContentType.GetType(), item.ContentType)</span> <span class="label label-info">@item.User.Username</span>
+                    </div>
+                </div>
             </div>
-        }
-    }
-    <div class="btn-group pull-right">
-        @Html.PageLinks(Model.Info, x => Url.Action("List", new { page = x, category = Model.CurrentCategory, searchString = Model.SearchString }))
-    </div>
 
-    <div>
-        @Html.ActionLink("Добавить новый пост", "Create", "Articles", null, new { @class = "btn btn-default" })
+            <div class="col-md-1"></div>
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-1">
+            </div>
+
+        }
+        <div class="btn-group pull-right">
+            @Html.PageLinks(Model.Info, x => Url.Action("List", new { page = x, category = Model.CurrentCategory, searchString = Model.SearchString }))
+        </div>
+        <div style="margin-right:90%">
+            @Html.ActionLink("Create new", "Create", "Articles", null, new { @class = "btn btn-primary" })
+        </div>
     </div>
-</div>
+}
+
 
 @section Scripts {
-    <script>
-        $("#raiting > span").click(function () {
-            var ratingElem = $(this).parent('#raiting');
-            var spanIndex = $(this).index();
-            //alert($(this).parent('#raiting').attr('postId'));
-            $.ajax({
-                type: "POST",
-                url: '/Articles/SetRating',
-                data: {
-                    postId: ratingElem.attr('postId'),
-                    rating: spanIndex
-                },
-                success: function (data) {
-                    ratingElem.children('div').text("|" + data.average + "|");
-                    ratingElem.children('span').each(function (index, val) {
-                        if (index >= -1 + spanIndex) {
-                            $(this).text('\u2605');
-                            $(this).css('color', 'gold');
-                        }
-                        else {
-                            $(this).text('\u2606');
-                            $(this).css('color', 'black');
-                        }
-                    });
-                },
-                failed: function () {
-                    alert('failed');
-                }
-            });
-        });
-    </script>
+    <script src="~/Scripts/star-rating.js" type="text/javascript"></script>
 }

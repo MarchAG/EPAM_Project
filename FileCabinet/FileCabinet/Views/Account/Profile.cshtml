@@ -1,23 +1,11 @@
 ﻿@model FileCabinet.Models.UserProfile
 
+<div id="categories" class="col-md-3">
+    @Html.Partial("_ProfileMenu", "Navigation")
+</div>
 @using (Html.BeginForm())
 {
-    <div class="form-group">
-        @Html.LabelFor(model => model.Username)
-        @Html.DisplayFor(model => model.Username)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.Email)
-        @Html.DisplayFor(model => model.Email)
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.DateOfBirth)
-        @Html.DisplayFor(model => model.DateOfBirth)
-    </div>
     <div>
-        @Html.ActionLink("Корректировать профиль", "Edit", "Account", null, new { @class = "btn btn-default" })
+        @Html.Action("PartOfProfile", new { user = Model, category = ViewBag.Categ})
     </div>
-    <hr/>
-    <h2>Мои публикации</h2>
-    @Html.Action("PersonalArticles");
 }
