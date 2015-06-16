@@ -204,21 +204,9 @@
     <Compile Include="Repository\IRepository.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\Data.mdf" />
-    <Content Include="App_Data\Data_log.ldf">
-      <DependentUpon>Data.mdf</DependentUpon>
-    </Content>
-    <Content Include="App_Data\FileCabinet.Models.UserContext.mdf" />
-    <Content Include="App_Data\FileCabinet.Models.UserContext_log.ldf">
-      <DependentUpon>FileCabinet.Models.UserContext.mdf</DependentUpon>
-    </Content>
-    <Content Include="App_Data\MyDbContext.mdf" />
-    <Content Include="App_Data\MyDbContext_log.ldf">
-      <DependentUpon>MyDbContext.mdf</DependentUpon>
-    </Content>
-    <Content Include="App_Data\UserContext.mdf" />
-    <Content Include="App_Data\UserContext_log.ldf">
-      <DependentUpon>UserContext.mdf</DependentUpon>
+    <Content Include="App_Data\UsersData.mdf" />
+    <Content Include="App_Data\UsersData_log.ldf">
+      <DependentUpon>UsersData.mdf</DependentUpon>
     </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
@@ -275,6 +263,8 @@
     <Content Include="Views\Account\_PersonalArticles.cshtml" />
     <Content Include="Views\Account\_ProfileMenu.cshtml" />
     <Content Include="Views\Account\_PersonalInfo.cshtml" />
+    <Content Include="Views\Account\_Users.cshtml" />
+    <Content Include="Views\Account\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

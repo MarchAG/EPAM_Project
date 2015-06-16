@@ -1,0 +1,32 @@
+﻿@model IEnumerable<FileCabinet.Models.UserProfile>
+
+<div class="col-sm-6 toppad">
+    <table class="table table-responsive custab" style="background-color:white">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Количество публикаций</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => item.Username)
+                </td>
+                <td>
+                    @Roles.GetRolesForUser(item.Username)[0]
+                </td>
+                <td>
+                    @item.Articles.Count()
+                </td>
+                <td class="text-center">
+                    <a href="/Account/Delete/@item.UserProfileId" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Del User</a>
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
