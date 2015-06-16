@@ -1,5 +1,7 @@
-﻿using FileCabinet.Models;
+﻿using FileCabinet.filters;
+using FileCabinet.Models;
 using FileCabinet.Repository;
+using Microsoft.Security.Application;
 using Ninject;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,8 @@ using WebMatrix.WebData;
 
 namespace FileCabinet.Controllers
 {
+
+    [InitializeSimpleMembershipAttribute]
     public class AccountController : Controller
     {
         [Inject]
@@ -28,6 +32,8 @@ namespace FileCabinet.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(Login login, string returnUrl)
         {
+            login.Username = Sanitizer.GetSafeHtmlFragment(login.Username);
+            login.Password = Sanitizer.GetSafeHtmlFragment(login.Password);
             if(ModelState.IsValid)
             {
                 if (WebSecurity.Login(login.Username, login.Password))
@@ -57,6 +63,10 @@ namespace FileCabinet.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(Register reg)
         {
+            reg.Username = Sanitizer.GetSafeHtmlFragment(reg.Username);
+            reg.Password = Sanitizer.GetSafeHtmlFragment(reg.Password);
+            reg.EMail = Sanitizer.GetSafeHtmlFragment(reg.EMail);
+
             if(ModelState.IsValid)
             {
                 try
@@ -125,6 +135,10 @@ namespace FileCabinet.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "UserProfileId,Username,Email,DateOfBirth")] UserProfile user)
         {
+            user.Username = Sanitizer.GetSafeHtmlFragment(user.Username);
+            user.Email = Sanitizer.GetSafeHtmlFragment(user.Email);
+            user.DateOfBirth = Sanitizer.GetSafeHtmlFragment(user.DateOfBirth);
+
             if(ModelState.IsValid)
             {
                 Repository.UpdateUser(user);

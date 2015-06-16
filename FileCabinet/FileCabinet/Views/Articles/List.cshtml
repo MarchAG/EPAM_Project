@@ -33,7 +33,7 @@
                     <div class="panel-body">
                         @Html.Action("Content", "Home", new { article = item})
                     </div>
-                    @if (@WebSecurity.CurrentUserId == -1)
+                    @if (WebSecurity.CurrentUserId == -1)
                     {
                         <div class="rating-notActive" style="margin-left:50%">
                             @Html.AverageRating(item, "color:red;margin-left:20px;margin-right:40px;")

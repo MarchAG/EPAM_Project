@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using WebMatrix.WebData;
 
 
@@ -43,6 +44,37 @@ namespace FileCabinet.filters
                     }
 
                     WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserProfileId", "Username", true);
+
+                    SimpleRoleProvider roles = (SimpleRoleProvider)Roles.Provider;
+                    SimpleMembershipProvider membership = (SimpleMembershipProvider)Membership.Provider;
+
+                    // Проверка наличия роли Admin
+                    if (!roles.RoleExists("Admin"))
+                    {
+                        roles.CreateRole("Admin");
+                    }
+                    // Проверка наличия роли Moderator
+                    if (!roles.RoleExists("Moderator"))
+                    {
+                        roles.CreateRole("Moderator");
+                    }
+
+                    // Проверка наличия роли User
+                    if (!roles.RoleExists("User"))
+                    {
+                        roles.CreateRole("User");
+                    }
+                    // Поиск пользователя с логином admin
+                    if (membership.GetUser("NeAdmin", false) == null)
+                    {
+                        WebSecurity.CreateUserAndAccount("NeAdmin", "145236", new { Email = "" }); // создание пользователя
+                        roles.AddUsersToRoles(new[] { "NeAdmin" }, new[] { "User" }); // установка роли для пользователя
+                    }
+                    if (membership.GetUser("user1", false) == null)
+                    {
+                        WebSecurity.CreateUserAndAccount("user1", "145236", new { Email = "" });
+                        roles.AddUsersToRoles(new[] { "user1" }, new[] { "User" });
+                    }
                 }
                 catch (Exception ex)
                 {

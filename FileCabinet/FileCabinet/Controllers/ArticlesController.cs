@@ -13,19 +13,23 @@ using System.Web.Security;
 using WebMatrix.WebData;
 using Ninject;
 using FileCabinet.Repository;
+using Microsoft.Security.Application;
 
 namespace FileCabinet.Controllers
 {
-    //[InitializeSimpleMembershipAttribute]
+    [InitializeSimpleMembershipAttribute]
+    [Authorize]
     public class ArticlesController : Controller
     {
         //private MyDBContext db = new MyDBContext();
         [Inject]
-        public IRepository Repository { get; set; }
+        public IRepository Repository{ get; set; }
         private int PageSize = 3;
-        // GET: Articles
+        [ValidateInput(false)]
         public ActionResult List(string category, string searchString, int page = 1)
         {
+            searchString = Sanitizer.GetSafeHtmlFragment(searchString);
+
             int typeOfFile = category == "Audio"? 2 : (category == "Video" ? 1 : 0);
             ArticlesViewModel articlesViewModel = new ArticlesViewModel
             {
@@ -71,18 +75,17 @@ namespace FileCabinet.Controllers
         [Authorize]
         public ActionResult Create()
         {
-            //ViewBag.UserProfileId = new SelectList(db.Users, "UserProfileId", "Username");
             return View();
         }
 
-        // POST: Articles/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[Bind(Include = "ArticleId,UserProfileId,Title,PathToContent,ContentType,DateOfPublication")]
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public ActionResult Create( CreateArticleViewModel createArt)
         {
+            createArt.Title = Sanitizer.GetSafeHtmlFragment(createArt.Title);
+            createArt.Description = Sanitizer.GetSafeHtmlFragment(createArt.Description);
+
             int type =  -2;
             if (ModelState.IsValid && (type = createArt.GetFileType()) != -1)
             {
@@ -119,24 +122,24 @@ namespace FileCabinet.Controllers
             }
             if (article.UserProfileId != WebSecurity.CurrentUserId)
                 return RedirectToAction("List");
-            //ViewBag.UserProfileId = new SelectList(db.Users, "UserProfileId", "Username", article.UserProfileId);
             return View(article);
         }
 
-        // POST: Articles/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[Bind(Include = "ArticleId,UserProfileId,Title,FileName,ContentType,DateOfPublication, Description, User")]
+
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public ActionResult Edit(Article article)
         {
+            article.Description = Sanitizer.GetSafeHtmlFragment(article.Description);
+            article.Title = Sanitizer.GetSafeHtmlFragment(article.Title);
+
             if (ModelState.IsValid)
             {
                 Repository.UpdateArticle(article);
-                return RedirectToAction("Index");
+                return RedirectToAction("List");
             }
-            //ViewBag.UserProfileId = new SelectList(db.Users, "UserProfileId", "Username", article.UserProfileId);
+
             return View(article);
         }
 
@@ -171,8 +174,6 @@ namespace FileCabinet.Controllers
 
         public FileResult Download(string path)
         {
-            //if (String.IsNullOrEmpty(path))
-
             var extension = Path.GetExtension(path);
             var filename = Path.GetFileName(path);
             return File(path, extension, filename);

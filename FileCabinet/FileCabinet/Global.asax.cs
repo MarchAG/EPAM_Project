@@ -14,7 +14,6 @@ namespace FileCabinet
 {
     public class MvcApplication : System.Web.HttpApplication
     {
-        //[InitializeSimpleMembershipAttribute]
         protected void Application_Start()
         {
             //Database.SetInitializer(new UsersInitializer());
@@ -22,7 +21,7 @@ namespace FileCabinet
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserProfileId", "Username", true);
+            //WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserProfileId", "Username", true);
         }
     }
 }
