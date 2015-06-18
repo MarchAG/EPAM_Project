@@ -17,14 +17,19 @@ using Microsoft.Security.Application;
 
 namespace FileCabinet.Controllers
 {
-    [InitializeSimpleMembershipAttribute]
     [Authorize]
+    [InitializeSimpleMembershipAttribute]
     public class ArticlesController : Controller
     {
         //private MyDBContext db = new MyDBContext();
-        [Inject]
-        public IRepository Repository{ get; set; }
-        private int PageSize = 3;
+        private IRepository Repository{ get; set; }
+         int PageSize = 3;
+
+        public ArticlesController(IRepository rep)
+        {
+            Repository = rep;
+        }
+
         [ValidateInput(false)]
         public ActionResult List(string category, string searchString, int page = 1)
         {
@@ -102,7 +107,7 @@ namespace FileCabinet.Controllers
                 if (article.FileName != null) 
                     createArt.ContentFile.SaveAs(Path.Combine(path, article.FileName));
                 Repository.AddArticle(article);
-                return RedirectToAction("Index");
+                return RedirectToAction("List");
             }
             return View(createArt);
         }
@@ -143,7 +148,6 @@ namespace FileCabinet.Controllers
             return View(article);
         }
 
-        // GET: Articles/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -160,7 +164,6 @@ namespace FileCabinet.Controllers
             return View(article);
         }
 
-        // POST: Articles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -169,7 +172,12 @@ namespace FileCabinet.Controllers
             Repository.DeleteArticle(article);
             FileInfo file = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "/UploadedFiles/" + article.FileName);
             file.Delete();
-            return RedirectToAction("Index");
+            return RedirectToRoute(new
+            {
+                controller = "Account",
+                action = "Profile",
+                category = "Articles"
+            });
         }
 
         public FileResult Download(string path)

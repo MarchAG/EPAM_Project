@@ -15,13 +15,15 @@ using WebMatrix.WebData;
 
 namespace FileCabinet.Controllers
 {
-
     [InitializeSimpleMembershipAttribute]
     public class AccountController : Controller
     {
-        [Inject]
-        public IRepository Repository { get; set; }
+        private IRepository Repository { get; set; }
         // GET: Account
+        public AccountController(IRepository rep)
+        {
+            Repository = rep;
+        }
         [HttpGet]
         public ActionResult Login()
         {
@@ -127,7 +129,7 @@ namespace FileCabinet.Controllers
                 var users = Repository.GetAllUsers.SkipWhile(x => x.Username == User.Identity.Name);
                 return PartialView("_Users", users);
             }
-            return View("Error");
+            return HttpNotFound();
         }
 
         [Authorize]
@@ -172,7 +174,6 @@ namespace FileCabinet.Controllers
             var user = Repository.GetAllUsers.FirstOrDefault(x => x.UserProfileId == id);
             try
             {
-                // TODO: Add delete logic here
                 if (Roles.GetRolesForUser(user.Username).Count() > 0)
                 {
                     Roles.RemoveUserFromRoles(user.Username, Roles.GetRolesForUser(user.Username));

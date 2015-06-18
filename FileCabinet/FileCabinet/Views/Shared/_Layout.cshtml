@@ -7,6 +7,8 @@
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/video-js.css" rel="stylesheet">
+    <script src="~/Scripts/video.js"></script>
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top" style="background-color:InactiveCaption">
@@ -66,7 +68,6 @@
         if (param != null)
             search.value = decodeURI(param);
     </script>
-    @*@Styles.Render("~/Content/starRating")*@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/jqueryval")

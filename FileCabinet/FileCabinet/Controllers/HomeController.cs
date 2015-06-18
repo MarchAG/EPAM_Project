@@ -11,12 +11,9 @@ using WebMatrix.WebData;
 
 namespace FileCabinet.Controllers
 {
-    //[InitializeSimpleMembershipAttribute]
+
     public class HomeController : Controller
     {
-        //MyDbContext uc = new MyDbContext();
-        [Inject]
-        public IRepository Repository { get; set; }
 
         public ActionResult Index(int? id)
         {

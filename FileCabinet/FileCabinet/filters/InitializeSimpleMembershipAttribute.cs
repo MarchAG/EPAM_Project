@@ -53,6 +53,7 @@ namespace FileCabinet.filters
                     {
                         roles.CreateRole("Admin");
                     }
+
                     // Проверка наличия роли Moderator
                     if (!roles.RoleExists("Moderator"))
                     {
@@ -65,15 +66,10 @@ namespace FileCabinet.filters
                         roles.CreateRole("User");
                     }
                     // Поиск пользователя с логином admin
-                    if (membership.GetUser("NeAdmin", false) == null)
+                    if (membership.GetUser("Anton", false) == null)
                     {
-                        WebSecurity.CreateUserAndAccount("NeAdmin", "145236", new { Email = "" }); // создание пользователя
-                        roles.AddUsersToRoles(new[] { "NeAdmin" }, new[] { "User" }); // установка роли для пользователя
-                    }
-                    if (membership.GetUser("user1", false) == null)
-                    {
-                        WebSecurity.CreateUserAndAccount("user1", "145236", new { Email = "" });
-                        roles.AddUsersToRoles(new[] { "user1" }, new[] { "User" });
+                        WebSecurity.CreateUserAndAccount("Anton", "145236", new { Email = "Admin@adm.aa" }); // создание пользователя
+                        roles.AddUsersToRoles(new[] { "Anton" }, new[] { "Admin" }); // установка роли для пользователя
                     }
                 }
                 catch (Exception ex)

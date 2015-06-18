@@ -1,4 +1,5 @@
 ﻿using FileCabinet.Models;
+using FileCabinet.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,6 @@ namespace FileCabinet.Controllers
 {
     public class NavigationController : Controller
     {
-        private MyDbContext db = new MyDbContext();
         // GET: Navigation
         public PartialViewResult Menu(string category = null)
         {

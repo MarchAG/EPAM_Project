@@ -30,8 +30,7 @@ namespace FileCabinet.Models
             switch (extension)
             {
                 case ".mp4":
-                case ".ogg":
-                case ".WebM":
+                case ".webm":
                     return 1;
                 case ".mp3":
                 case ".waw":
