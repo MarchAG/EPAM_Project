@@ -69,3 +69,9 @@ textarea {
 body{
     background-color:aliceblue;
 }
+
+@media (max-width: 768px) {
+    #categories {
+        width : 100%;
+    }
+}

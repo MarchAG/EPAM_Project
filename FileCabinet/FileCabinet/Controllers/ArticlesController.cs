@@ -56,7 +56,7 @@ namespace FileCabinet.Controllers
                     //.Union(articlesViewModel.Articles.Where(x => x.Description.Contains(searchString))));
                 articlesViewModel.Info.TotalArticles = articlesViewModel.Articles.Count();
             }
-            articlesViewModel.Articles = articlesViewModel.Articles.OrderBy(article => article.ArticleId).Skip((page - 1) * PageSize).Take(PageSize);
+            articlesViewModel.Articles = articlesViewModel.Articles.OrderByDescending(article => article.ArticleId).Skip((page - 1) * PageSize).Take(PageSize);
            
             return View(articlesViewModel);
         }
