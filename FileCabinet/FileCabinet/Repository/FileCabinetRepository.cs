@@ -13,7 +13,7 @@ namespace FileCabinet.Repository
         [Inject]
         public MyDbContext context { get; set; }
 
-        public IEnumerable<UserProfile> GetAllUsers
+        public IQueryable<UserProfile> GetAllUsers
         {
             get { return context.Users; }
         }
@@ -47,7 +47,7 @@ namespace FileCabinet.Repository
             context.SaveChanges();
         }
 
-        public IEnumerable<Article> GetAllArticles
+        public IQueryable<Article> GetAllArticles
         {
             get { return context.Articles; }
         }
@@ -76,7 +76,7 @@ namespace FileCabinet.Repository
             return context.Articles.Find(id);
         }
 
-        public IEnumerable<Mark> GetAllMarks
+        public IQueryable<Mark> GetAllMarks
         {
             get { return context.Marks; }
         }

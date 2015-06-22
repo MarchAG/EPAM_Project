@@ -23,7 +23,8 @@ namespace FileCabinet.Controllers
     {
         //private MyDBContext db = new MyDBContext();
         private IRepository Repository{ get; set; }
-         int PageSize = 3;
+        private int PageSize = 3;
+        private static object Lock = new object();
 
         public ArticlesController(IRepository rep)
         {
@@ -180,6 +181,7 @@ namespace FileCabinet.Controllers
             });
         }
 
+        [Authorize]
         public FileResult Download(string path)
         {
             var extension = Path.GetExtension(path);
@@ -199,21 +201,24 @@ namespace FileCabinet.Controllers
             else
             {
                 Mark mark = null;
-                if (Repository.GetAllMarks.FirstOrDefault(x => x.ArticleId == (int)postId
+                lock (Lock)
+                {
+                    if (Repository.GetAllMarks.FirstOrDefault(x => x.ArticleId == (int)postId
                     && x.UserProfileId == WebSecurity.CurrentUserId) == null)
-                {
-                    mark = new Mark
                     {
-                        ArticleId = (int)postId,
-                        UserProfileId = WebSecurity.CurrentUserId,
-                        Value = 6 - (int)rating
-                    };
-                    Repository.AddMark(mark);
-                }
-                else
-                {
-                    Repository.GetAllMarks.FirstOrDefault(x => x.ArticleId == (int)postId
-                    && x.UserProfileId == WebSecurity.CurrentUserId).Value = 6 - (int)rating;
+                        mark = new Mark
+                        {
+                            ArticleId = (int)postId,
+                            UserProfileId = WebSecurity.CurrentUserId,
+                            Value = 6 - (int)rating
+                        };
+                        Repository.AddMark(mark);
+                    }
+                    else
+                    {
+                        Repository.GetAllMarks.FirstOrDefault(x => x.ArticleId == (int)postId
+                        && x.UserProfileId == WebSecurity.CurrentUserId).Value = 6 - (int)rating;
+                    }
                 }
                 Repository.SaveChanges();
                 return Json(new

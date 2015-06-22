@@ -119,7 +119,7 @@ namespace FileCabinet.Controllers
                 return PartialView("_PersonalInfo", user);
             if (category == "Articles")
             {
-                IEnumerable<Article> articles = Repository.GetAllArticles;
+                IQueryable<Article> articles = Repository.GetAllArticles;
                 if (!Roles.GetRolesForUser(User.Identity.Name).Contains("Admin"))
                     articles = articles.Where(x => x.UserProfileId == WebSecurity.CurrentUserId);
                 return PartialView("_PersonalArticles", articles);
