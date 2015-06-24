@@ -5,11 +5,9 @@
 }
 
 <h2>Details</h2>
-
         <div class="col-md-3"></div>
         <div class="col-md-7">
             <div id="postlist">
-
                 <div class="panel">
                     <div class="panel-heading">
                         <div class="text-center">
@@ -31,7 +29,7 @@
                         @Model.Description
                     </div>
                     <div style="margin-left:3%">
-                        <a class='btn btn-primary btn-xs' href="~/UploadedFiles/@Model.FileName"><span class="glyphicon glyphicon-download"></span> Download</a>
+                        @Html.ActionLink("Download", "Download", "Articles", new { id = Model.ArticleId }, new { @class="btn btn-primary btn-xs" })
                     </div>
                     @if (@WebSecurity.CurrentUserId == -1)
                     {

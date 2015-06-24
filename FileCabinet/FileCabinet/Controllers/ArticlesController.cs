@@ -67,7 +67,7 @@ namespace FileCabinet.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return HttpNotFound();
             }
             Article article = Repository.FindArticleById((int)id);
             if (article == null)
@@ -118,7 +118,7 @@ namespace FileCabinet.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return HttpNotFound();
             }
             Article article = Repository.FindArticleById((int)id);
             
@@ -182,11 +182,14 @@ namespace FileCabinet.Controllers
         }
 
         [Authorize]
-        public FileResult Download(string path)
+        public ActionResult Download(int? id)
         {
+            var article = Repository.GetAllArticles.FirstOrDefault(x => x.ArticleId == id);
+            if (id == null || article == null)
+                return HttpNotFound();
+            string path = "~/UploadedFiles/" + article.FileName;
             var extension = Path.GetExtension(path);
-            var filename = Path.GetFileName(path);
-            return File(path, extension, filename);
+            return File(path, extension, article.FileName);
         }
 
         [HttpPost]
@@ -200,27 +203,19 @@ namespace FileCabinet.Controllers
             }
             else
             {
-                Mark mark = null;
-                lock (Lock)
+                Mark mark = Repository.GetAllMarks.FirstOrDefault(x => x.ArticleId == (int)postId
+                                    && x.UserProfileId == WebSecurity.CurrentUserId);
+                if( mark == null)
                 {
-                    if (Repository.GetAllMarks.FirstOrDefault(x => x.ArticleId == (int)postId
-                    && x.UserProfileId == WebSecurity.CurrentUserId) == null)
+                    mark = new Mark
                     {
-                        mark = new Mark
-                        {
-                            ArticleId = (int)postId,
-                            UserProfileId = WebSecurity.CurrentUserId,
-                            Value = 6 - (int)rating
-                        };
-                        Repository.AddMark(mark);
-                    }
-                    else
-                    {
-                        Repository.GetAllMarks.FirstOrDefault(x => x.ArticleId == (int)postId
-                        && x.UserProfileId == WebSecurity.CurrentUserId).Value = 6 - (int)rating;
-                    }
+                        ArticleId = (int)postId,
+                        UserProfileId = WebSecurity.CurrentUserId
+                    };
+                    Repository.AddMark(mark);
                 }
-                Repository.SaveChanges();
+                mark.Value = 6 - (int)rating;
+                Repository.UpdateMark(mark);
                 return Json(new
                 {
                     success = true,

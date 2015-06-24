@@ -48,7 +48,7 @@ namespace FileCabinet.Tests.Controllers
                         Username = "Anton"
                     }
                 },
-            });
+            }.AsQueryable());
             mock.Setup(m => m.FindArticleById(It.IsAny<int>())).Returns((int x) => mock.Object.GetAllArticles.FirstOrDefault(y => y.ArticleId == x ));
             ArticlesController controller = new ArticlesController(mock.Object);
             ViewResult result1 = controller.Details(null) as ViewResult;
@@ -86,7 +86,7 @@ namespace FileCabinet.Tests.Controllers
                         Username = "Anton"
                     }
                 },
-            });
+            }.AsQueryable());
             // Arrange
             ArticlesController controller = new ArticlesController(mock.Object);
             ViewResult viewRes = controller.List(null, "<br/>", 1) as ViewResult;
@@ -141,7 +141,7 @@ namespace FileCabinet.Tests.Controllers
                         Username = "BBB"
                     }
                 },
-            });
+            }.AsQueryable());
             ArticlesController controller = new ArticlesController(mock.Object);
 
             ViewResult view = controller.List(null, null, 2) as ViewResult;

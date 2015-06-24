@@ -29,7 +29,7 @@ namespace FileCabinet.Tests.Controllers
                     Username = "B",
                     Email = "bb@bb.b"
                 }
-            });
+            }.AsQueryable());
             AccountController controller = new AccountController(mock.Object);
             ViewResult result = controller.PartOfProfile(new UserProfile{
                 Username = "C",
@@ -56,7 +56,7 @@ namespace FileCabinet.Tests.Controllers
                     Username = "B",
                     Email = "bb@bb.b"
                 }
-            });
+            }.AsQueryable());
 
             mock.Setup(m => m.FindUserById(It.IsAny<int>())).Returns((int x) => mock.Object.GetAllUsers.FirstOrDefault(y => y.UserProfileId == x));
             
@@ -81,7 +81,7 @@ namespace FileCabinet.Tests.Controllers
                     Username = "B",
                     Email = "bb@bb.b"
                 }
-            });
+            }.AsQueryable());
 
             mock.Setup(m => m.UpdateUser(It.IsAny<UserProfile>()));
             
