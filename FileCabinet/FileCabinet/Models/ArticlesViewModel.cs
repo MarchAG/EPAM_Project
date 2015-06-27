@@ -11,5 +11,6 @@ namespace FileCabinet.Models
         public PagingInfo Info { get; set; }
         public string CurrentCategory { get; set; }
         public string SearchString { get; set; }
+        public string Tag { get; set; }
     }
 }

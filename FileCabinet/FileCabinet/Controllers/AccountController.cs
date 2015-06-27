@@ -18,11 +18,11 @@ namespace FileCabinet.Controllers
     [InitializeSimpleMembershipAttribute]
     public class AccountController : Controller
     {
-        private IRepository Repository { get; set; }
+        private IRepository repository;
         // GET: Account
         public AccountController(IRepository rep)
         {
-            Repository = rep;
+            repository = rep;
         }
         [HttpGet]
         public ActionResult Login()
@@ -99,7 +99,7 @@ namespace FileCabinet.Controllers
         [HttpGet]
         public ActionResult Profile(string category)
         {
-            var user = Repository.GetAllUsers.FirstOrDefault(x => x.Username == User.Identity.Name);
+            var user = repository.GetAllUsers.FirstOrDefault(x => x.Username == User.Identity.Name);
             ViewBag.Categ = category;
             return View(user);
         }
@@ -108,7 +108,7 @@ namespace FileCabinet.Controllers
         [HttpGet]
         public ActionResult Edit()
         {
-            var user = Repository.GetAllUsers.FirstOrDefault(x => x.Username == User.Identity.Name);
+            var user = repository.GetAllUsers.FirstOrDefault(x => x.Username == User.Identity.Name);
             return View(user);
         }
 
@@ -119,14 +119,14 @@ namespace FileCabinet.Controllers
                 return PartialView("_PersonalInfo", user);
             if (category == "Articles")
             {
-                IQueryable<Article> articles = Repository.GetAllArticles;
+                IQueryable<Article> articles = repository.GetAllArticles;
                 if (!Roles.GetRolesForUser(User.Identity.Name).Contains("Admin"))
                     articles = articles.Where(x => x.UserProfileId == WebSecurity.CurrentUserId);
                 return PartialView("_PersonalArticles", articles);
             }
             else if (category == "Users" && Roles.GetRolesForUser(User.Identity.Name).Contains("Admin"))
             {
-                var users = Repository.GetAllUsers.SkipWhile(x => x.Username == User.Identity.Name);
+                var users = repository.GetAllUsers.SkipWhile(x => x.Username == User.Identity.Name);
                 return PartialView("_Users", users);
             }
             return HttpNotFound();
@@ -143,7 +143,7 @@ namespace FileCabinet.Controllers
 
             if(ModelState.IsValid)
             {
-                Repository.UpdateUser(user);
+                repository.UpdateUser(user);
                 return RedirectToAction("Profile");
             }
             return View(user);
@@ -156,7 +156,7 @@ namespace FileCabinet.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UserProfile user = Repository.FindUserById((int)id);
+            UserProfile user = repository.FindUserById((int)id);
             if (user == null)
             {
                 return HttpNotFound();
@@ -171,7 +171,7 @@ namespace FileCabinet.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var user = Repository.GetAllUsers.FirstOrDefault(x => x.UserProfileId == id);
+            var user = repository.GetAllUsers.FirstOrDefault(x => x.UserProfileId == id);
             try
             {
                 if (Roles.GetRolesForUser(user.Username).Count() > 0)
@@ -191,7 +191,7 @@ namespace FileCabinet.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            Repository.Dispose();
+            repository.Dispose();
             base.Dispose(disposing);
         }
     }

@@ -5,10 +5,10 @@
     ViewBag.Title = "List";
 }
 
+<h2 class="text-center">Список постов</h2>
 <div id="categories" class="col-md-3">
     @Html.Action("Menu", "Navigation")
 </div>
-<h2>Список постов</h2>
 @using (Html.BeginForm())
 {
     <div class="col-md-7">
@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="panel-body">
-                        @Html.Action("Content", "Home", new { article = item})
+                        @Html.Action("Content", "Home", new { article = item })
                     </div>
                     @if (WebSecurity.CurrentUserId == -1)
                     {
@@ -48,7 +48,19 @@
                         </div>
                     }
                     <div class="panel-footer">
-                        <span class="label label-default">@Enum.GetName(item.ContentType.GetType(), item.ContentType)</span> <span class="label label-info">@item.User.Username</span>
+                        <div>
+                            <span class="label label-default">@Enum.GetName(item.ContentType.GetType(), item.ContentType)</span>
+                            <span class="label label-info">@item.User.Username</span>
+                        </div>
+                        <div>
+                            @if (!String.IsNullOrEmpty(item.Tags))
+                            {
+                                foreach (var str in item.Tags.Split())
+                                {
+                                    <span class="label label-success">@str</span>
+                                }
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -61,13 +73,16 @@
 
         }
         <div class="btn-group pull-right">
-            @Html.PageLinks(Model.Info, x => Url.Action("List", new { page = x, category = Model.CurrentCategory, searchString = Model.SearchString }))
+            @Html.PageLinks(Model.Info, x => Url.Action("List", new { page = x, category = Model.CurrentCategory, searchString = Model.SearchString, tag = Model.Tag }))
         </div>
         <div style="margin-right:90%">
             @Html.ActionLink("Create new", "Create", "Articles", null, new { @class = "btn btn-primary" })
         </div>
     </div>
 }
+<div id="categories" class="col-md-2">
+    @Html.Action("TagsMenu", "Navigation")
+</div>
 
 
 @section Scripts {

@@ -17,6 +17,10 @@ namespace FileCabinet.Models
         public string Description { get; set; }
         public ContentFileType ContentType { get; set; }
         public string DateOfPublication { get; set; }
+
+        [DataType(DataType.MultilineText)]
+        public string Tags { get; set; }
+
         public virtual UserProfile User { get; set; }
 
         public virtual List<Mark> Marks { get; set; }

@@ -22,40 +22,48 @@ namespace FileCabinet.Controllers
     public class ArticlesController : Controller
     {
         //private MyDBContext db = new MyDBContext();
-        private IRepository Repository{ get; set; }
+        private IRepository repository;
         private int PageSize = 3;
         private static object Lock = new object();
 
         public ArticlesController(IRepository rep)
         {
-            Repository = rep;
+            repository = rep;
         }
 
         [ValidateInput(false)]
-        public ActionResult List(string category, string searchString, int page = 1)
+        public ActionResult List(string category, string searchString, string tag, int page = 1)
         {
             searchString = Sanitizer.GetSafeHtmlFragment(searchString);
 
             int typeOfFile = category == "Audio"? 2 : (category == "Video" ? 1 : 0);
             ArticlesViewModel articlesViewModel = new ArticlesViewModel
             {
-                Articles = Repository.GetAllArticles
+                Articles = repository.GetAllArticles
                 .Where(x => category == null || x.ContentType == (ContentFileType)typeOfFile),
                 Info = new PagingInfo
                 {
                     CurrentPage = page,
                     PostsPerPage = PageSize,
-                    TotalArticles = category == null ? Repository.GetAllArticles.Count() : Repository.GetAllArticles.Where(x => x.ContentType == (ContentFileType)typeOfFile).Count()
+                    TotalArticles = category == null ? repository.GetAllArticles.Count() : repository.GetAllArticles.Where(x => x.ContentType == (ContentFileType)typeOfFile).Count()
                 },
                 CurrentCategory = category,
-                SearchString = searchString
+                SearchString = searchString,
+                Tag = tag
             };
             if(!String.IsNullOrEmpty(searchString))
             {
-                articlesViewModel.Articles = Repository.GetAllArticles
+                articlesViewModel.Articles = repository.GetAllArticles
                     .Where(x => x.Title.Contains(searchString) || x.User.Username.Contains(searchString));
                     //.Union(articlesViewModel.Articles.Where(x => x.Description.Contains(searchString))));
                 articlesViewModel.Info.TotalArticles = articlesViewModel.Articles.Count();
+            }
+            if(!String.IsNullOrEmpty(tag))
+            {
+                articlesViewModel.Articles = repository.GetAllArticles
+                    .Where(x => x.Tags.Contains(tag));
+                articlesViewModel.Info.TotalArticles = articlesViewModel.Articles.Count();
+
             }
             articlesViewModel.Articles = articlesViewModel.Articles.OrderByDescending(article => article.ArticleId).Skip((page - 1) * PageSize).Take(PageSize);
            
@@ -69,7 +77,7 @@ namespace FileCabinet.Controllers
             {
                 return HttpNotFound();
             }
-            Article article = Repository.FindArticleById((int)id);
+            Article article = repository.FindArticleById((int)id);
             if (article == null)
             {
                 return HttpNotFound();
@@ -102,12 +110,13 @@ namespace FileCabinet.Controllers
                     FileName = Guid.NewGuid().ToString() + Path.GetExtension(createArt.ContentFile.FileName),
                     ContentType = (ContentFileType)type,
                     Description = createArt.Description,
-                    Title = createArt.Title
+                    Title = createArt.Title,
+                    Tags = createArt.Tags
                 };
                 string path = AppDomain.CurrentDomain.BaseDirectory + "UploadedFiles/";
                 if (article.FileName != null) 
                     createArt.ContentFile.SaveAs(Path.Combine(path, article.FileName));
-                Repository.AddArticle(article);
+                repository.AddArticle(article);
                 return RedirectToAction("List");
             }
             return View(createArt);
@@ -120,7 +129,7 @@ namespace FileCabinet.Controllers
             {
                 return HttpNotFound();
             }
-            Article article = Repository.FindArticleById((int)id);
+            Article article = repository.FindArticleById((int)id);
             
             if (article == null)
             {
@@ -142,7 +151,7 @@ namespace FileCabinet.Controllers
 
             if (ModelState.IsValid)
             {
-                Repository.UpdateArticle(article);
+                repository.UpdateArticle(article);
                 return RedirectToAction("List");
             }
 
@@ -155,7 +164,7 @@ namespace FileCabinet.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Article article = Repository.FindArticleById((int)id);
+            Article article = repository.FindArticleById((int)id);
             if (article == null)
             {
                 return HttpNotFound();
@@ -169,8 +178,8 @@ namespace FileCabinet.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Article article = Repository.FindArticleById(id);
-            Repository.DeleteArticle(article);
+            Article article = repository.FindArticleById(id);
+            repository.DeleteArticle(article);
             FileInfo file = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "/UploadedFiles/" + article.FileName);
             file.Delete();
             return RedirectToRoute(new
@@ -184,7 +193,7 @@ namespace FileCabinet.Controllers
         [Authorize]
         public ActionResult Download(int? id)
         {
-            var article = Repository.GetAllArticles.FirstOrDefault(x => x.ArticleId == id);
+            var article = repository.GetAllArticles.FirstOrDefault(x => x.ArticleId == id);
             if (id == null || article == null)
                 return HttpNotFound();
             string path = "~/UploadedFiles/" + article.FileName;
@@ -203,32 +212,38 @@ namespace FileCabinet.Controllers
             }
             else
             {
-                Mark mark = Repository.GetAllMarks.FirstOrDefault(x => x.ArticleId == (int)postId
+                try
+                {
+                    Mark mark = repository.GetAllMarks.FirstOrDefault(x => x.ArticleId == (int)postId
                                     && x.UserProfileId == WebSecurity.CurrentUserId);
-                if( mark == null)
-                {
-                    mark = new Mark
+                    if (mark == null)
                     {
-                        ArticleId = (int)postId,
-                        UserProfileId = WebSecurity.CurrentUserId
-                    };
-                    Repository.AddMark(mark);
+                        mark = new Mark
+                        {
+                            ArticleId = (int)postId,
+                            UserProfileId = WebSecurity.CurrentUserId
+                        };
+                        repository.AddMark(mark);
+                    }
+                    mark.Value = 6 - (int)rating;
+                    repository.UpdateMark(mark);
+                    return Json(new
+                    {
+                        success = true,
+                        average = repository.FindArticleById((int)postId)
+                        .Marks.Average(x => x.Value)
+                    }, JsonRequestBehavior.AllowGet);
                 }
-                mark.Value = 6 - (int)rating;
-                Repository.UpdateMark(mark);
-                return Json(new
+                catch(Exception ex)
                 {
-                    success = true,
-                    average = Repository.GetAllArticles
-                    .FirstOrDefault(x => x.ArticleId == postId)
-                    .Marks.Average(x => x.Value)
-                }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = false, responseText = "Error." }, JsonRequestBehavior.AllowGet);
+                }
             }
         }
 
         protected override void Dispose(bool disposing)
         {
-            Repository.Dispose();
+            repository.Dispose();
             base.Dispose(disposing);
         }
     }

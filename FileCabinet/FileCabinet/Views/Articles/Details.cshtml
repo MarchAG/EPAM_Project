@@ -5,58 +5,71 @@
 }
 
 <h2>Details</h2>
-        <div class="col-md-3"></div>
-        <div class="col-md-7">
-            <div id="postlist">
-                <div class="panel">
-                    <div class="panel-heading">
-                        <div class="text-center">
-                            <div class="row">
-                                <div class="col-sm-9">
-                                    <h3 class="pull-left">@Html.DisplayFor(model => model.Title)</h3>
-                                </div>
-                                <div class="col-sm-3">
-                                    <h4 class="pull-right">
-                                        <small><em>@Model.DateOfPublication</em></small>
-                                    </h4>
-                                </div>
-                            </div>
+<div class="col-md-3"></div>
+<div class="col-md-7">
+    <div id="postlist">
+        <div class="panel">
+            <div class="panel-heading">
+                <div class="text-center">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <h3 class="pull-left">@Html.DisplayFor(model => model.Title)</h3>
                         </div>
-                    </div>
-                    <div class="panel-body">
-                        @Html.Action("Content", "Home", new { article = Model })
-                        <h5>Описание:</h5>
-                        @Model.Description
-                    </div>
-                    <div style="margin-left:3%">
-                        @Html.ActionLink("Download", "Download", "Articles", new { id = Model.ArticleId }, new { @class="btn btn-primary btn-xs" })
-                    </div>
-                    @if (@WebSecurity.CurrentUserId == -1)
-                    {
-                        <div class="rating-notActive" style="margin-left:50%">
-                            @Html.AverageRating(Model, "color:red;margin-left:20px;margin-right:40px;")
-                            @Html.RatingStars(Model)
+                        <div class="col-sm-3">
+                            <h4 class="pull-right">
+                                <small><em>@Model.DateOfPublication</em></small>
+                            </h4>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="rating " style="margin-left:5%" id="raiting" postid="@Model.ArticleId">
-                            @Html.AverageRating(Model, "color:red;margin-left:20px;margin-right:40px;")
-                            @Html.RatingStars(Model)
-                        </div>
-                    }
-                    <div class="panel-footer">
-                        <span class="label label-default">@Enum.GetName(Model.ContentType.GetType(), Model.ContentType)</span> <span class="label label-info">@Model.User.Username</span>
                     </div>
                 </div>
             </div>
-            <div><a href="/Articles/List" id="loadmore" class="btn btn-primary">Back to list</a></div>
+            <div class="panel-body">
+                @Html.Action("Content", "Home", new { article = Model })
+                <h5>Описание:</h5>
+                @Model.Description
+            </div>
+            <div style="margin-left:3%">
+                @Html.ActionLink("Download", "Download", "Articles", new { id = Model.ArticleId }, new { @class = "btn btn-primary btn-xs" })
+            </div>
+            @if (@WebSecurity.CurrentUserId == -1)
+            {
+                <div class="rating-notActive" style="margin-left:50%">
+                    @Html.AverageRating(Model, "color:red;margin-left:20px;margin-right:40px;")
+                    @Html.RatingStars(Model)
+                </div>
+            }
+            else
+            {
+                <div class="rating " style="margin-left:5%" id="raiting" postid="@Model.ArticleId">
+                    @Html.AverageRating(Model, "color:red;margin-left:20px;margin-right:40px;")
+                    @Html.RatingStars(Model)
+                </div>
+            }
+            <div class="panel-footer">
+                <div>
+                    <span class="label label-default">@Enum.GetName(Model.ContentType.GetType(), Model.ContentType)</span>
+                    <span class="label label-info">@Model.User.Username</span>
+                </div>
+                <div>
+                    @if (!String.IsNullOrEmpty(Model.Tags))
+                    {
+                        foreach (var str in Model.Tags.Split())
+                        {
+                            <span class="label label-success">@str</span>
+                        }
+                    }
+                </div>
+            </div>
+
         </div>
-        <div class="col-md-1"></div>
-        <div class="col-md-3">
-        </div>
-        <div class="col-md-1">
-        </div>
+    </div>
+    <div><a href="/Articles/List" id="loadmore" class="btn btn-primary">Back to list</a></div>
+</div>
+<div class="col-md-1"></div>
+<div class="col-md-3">
+</div>
+<div class="col-md-1">
+</div>
 
 @section Scripts {
     <script src="~/Scripts/star-rating.js" type="text/javascript"></script>

@@ -16,17 +16,22 @@ namespace FileCabinet
             routes.MapRoute(
                 name: null,
                 url: "Articles",
-                defaults: new { controller = "Articles", action = "List", category = (string)null, page = 1 });
+                defaults: new { controller = "Articles", action = "List", category = (string)null, tag = (string)null, page = 1 });
 
             routes.MapRoute(
                 name: null,
                 url: "Articles/page{page}",
-                defaults: new { controller = "Articles", action = "List", category = (string)null },
+                defaults: new { controller = "Articles", action = "List", category = (string)null, tag = (string)null },
                 constraints: new { page = @"\d+" });
 
             routes.MapRoute(
                 name: null,
                 url: "Articles/Category/{category}",
+                defaults: new { controller = "Articles", action = "List", tag = (string)null, page = 1 });
+
+            routes.MapRoute(
+                name: null,
+                url: "Articles/Tag/{tag}",
                 defaults: new { controller = "Articles", action = "List", page = 1 });
 
             routes.MapRoute(
@@ -42,6 +47,12 @@ namespace FileCabinet
             routes.MapRoute(
                 name: null,
                 url: "Articles/Category/{category}/page{page}",
+                defaults: new { controller = "Articles", action = "List" },
+                constraints: new { page = @"\d+" });
+
+            routes.MapRoute(
+                name: null,
+                url: "Articles/Tag/{tag}/page{page}",
                 defaults: new { controller = "Articles", action = "List" },
                 constraints: new { page = @"\d+" });
 
