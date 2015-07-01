@@ -51,12 +51,9 @@
                     <span class="label label-info">@Model.User.Username</span>
                 </div>
                 <div>
-                    @if (!String.IsNullOrEmpty(Model.Tags))
+                    @foreach (var tag in Model.Tags)
                     {
-                        foreach (var str in Model.Tags.Split())
-                        {
-                            <span class="label label-success">@str</span>
-                        }
+                        <span class="label label-success">@tag.Value</span>
                     }
                 </div>
             </div>

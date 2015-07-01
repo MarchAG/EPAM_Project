@@ -21,7 +21,6 @@ namespace FileCabinet.Models
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
-        [DataType(DataType.MultilineText)]
         public string Tags { get; set; }
 
         public int GetFileType()

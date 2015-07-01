@@ -1,4 +1,4 @@
-﻿@model FileCabinet.Models.Article
+﻿@model FileCabinet.Models.EditArticleViewModel
 
 @{
     ViewBag.Title = "Edit";
@@ -15,11 +15,6 @@
         <h4>Article</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.ArticleId)
-        @Html.HiddenFor(model => model.UserProfileId)
-        @Html.HiddenFor(model => model.ContentType)
-        @Html.HiddenFor(model => model.FileName)
-        @Html.HiddenFor(model => model.DateOfPublication)
         <div class="form-group">
             @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -27,7 +22,6 @@
                 @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -38,7 +32,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Tags, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Tags, new { htmlAttributes = new { @class = "form-control", @rows = "6" } })
+                @Html.EditorFor(model => model.Tags, new { htmlAttributes = new { @class = "form-control", @id="tags" } })
                 @Html.ValidationMessageFor(model => model.Tags, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -56,4 +50,9 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/autocoomplete")
+    <link rel="stylesheet" href="~/Content/jquery-ui.css">
+    <script>
+        Autocomplete('@ViewBag.AllTags');
+    </script>
 }

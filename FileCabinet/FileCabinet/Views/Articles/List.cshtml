@@ -53,12 +53,9 @@
                             <span class="label label-info">@item.User.Username</span>
                         </div>
                         <div>
-                            @if (!String.IsNullOrEmpty(item.Tags))
+                            @foreach (var tag in item.Tags )
                             {
-                                foreach (var str in item.Tags.Split())
-                                {
-                                    <span class="label label-success">@str</span>
-                                }
+                                <span class="label label-success">@tag.Value</span>
                             }
                         </div>
                     </div>

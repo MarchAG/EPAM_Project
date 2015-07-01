@@ -27,6 +27,10 @@ namespace FileCabinet
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
                       "~/Content/rating.css"));
+            bundles.Add(new ScriptBundle("~/bundles/autocoomplete").Include(
+                "~/Scripts/autocomplete.js",
+                "~/Scripts/jquery-1.10.2.js",
+                "~/Scripts/jquery-ui.js"));
         }
     }
 }

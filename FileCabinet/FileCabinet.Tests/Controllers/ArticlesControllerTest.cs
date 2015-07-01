@@ -89,7 +89,7 @@ namespace FileCabinet.Tests.Controllers
             }.AsQueryable());
             // Arrange
             ArticlesController controller = new ArticlesController(mock.Object);
-            ViewResult viewRes = controller.List(null, "<br/>", 1) as ViewResult;
+            ViewResult viewRes = controller.List(null, "<br/>", null, 1) as ViewResult;
             ArticlesViewModel result = (ArticlesViewModel)viewRes.Model;
             // Assert
             Assert.AreEqual(0, result.Articles.Count());
@@ -144,7 +144,7 @@ namespace FileCabinet.Tests.Controllers
             }.AsQueryable());
             ArticlesController controller = new ArticlesController(mock.Object);
 
-            ViewResult view = controller.List(null, null, 2) as ViewResult;
+            ViewResult view = controller.List(null, null, null, 2) as ViewResult;
             ArticlesViewModel result = (ArticlesViewModel)view.Model;
             List<Article> articles = result.Articles.ToList();
 

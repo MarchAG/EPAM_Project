@@ -211,15 +211,21 @@
     <Compile Include="Migrations\201506242001159_uniq.Designer.cs">
       <DependentUpon>201506242001159_uniq.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201507011218078_tags.cs" />
+    <Compile Include="Migrations\201507011218078_tags.Designer.cs">
+      <DependentUpon>201507011218078_tags.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Article.cs" />
     <Compile Include="Models\ArticlesViewModel.cs" />
     <Compile Include="Models\CreateArticleViewModel.cs" />
+    <Compile Include="Models\EditArticleViewModel.cs" />
     <Compile Include="Models\Login.cs" />
     <Compile Include="Models\Mark.cs" />
     <Compile Include="Models\PagingInfo.cs" />
     <Compile Include="Models\Register.cs" />
     <Compile Include="Models\MyDbContext.cs" />
+    <Compile Include="Models\Tag.cs" />
     <Compile Include="Models\UserInitializer.cs" />
     <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -233,6 +239,7 @@
     </Content>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\rating.css" />
     <Content Include="Content\video-js.css" />
     <Content Include="Content\video-js.min.css" />
@@ -242,6 +249,7 @@
     <Content Include="fonts\vjs.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Scripts\autocomplete.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="fonts\vjs.woff" />
@@ -252,6 +260,7 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -349,6 +358,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201506242001159_uniq.resx">
       <DependentUpon>201506242001159_uniq.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507011218078_tags.resx">
+      <DependentUpon>201507011218078_tags.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

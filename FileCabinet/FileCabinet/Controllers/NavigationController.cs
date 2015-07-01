@@ -26,14 +26,12 @@ namespace FileCabinet.Controllers
         public PartialViewResult TagsMenu()
         {
             var articles = repository.GetAllArticles;
-            StringBuilder allTags = new StringBuilder();
+            List<string> tags = new List<string>();
             foreach(var item in articles)
             {
-                if(!String.IsNullOrEmpty(item.Tags))
-                    allTags.Append(item.Tags + " ");
+                tags.AddRange(item.Tags.Select(x => x.Value));
             }
-            var tags = allTags.ToString().Split(new [] {' '}, StringSplitOptions.RemoveEmptyEntries).Distinct();
-            return PartialView("_TagsMenu", tags);
+            return PartialView("_TagsMenu", tags.Distinct());
         }
     }
 }

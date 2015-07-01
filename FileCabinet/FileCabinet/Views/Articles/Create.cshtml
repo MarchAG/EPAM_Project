@@ -8,59 +8,64 @@
 
 <div class="col-">
 
-@using (Html.BeginForm("Create","Articles", FormMethod.Post, new { enctype = "multipart/form-data" })) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>CreateArt</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @rows="6" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.Tags, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Tags, new { htmlAttributes = new { @class = "form-control", @rows = "6" } })
-                @Html.ValidationMessageFor(model => model.Tags, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.ContentFile, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+    @using (Html.BeginForm("Create", "Articles", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <h4>CreateArt</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.TextBoxFor(model => model.ContentFile, new { type="file", accept = ".mp3,.mp4,.docx,.txt,.doc,.ogg,.webm" })
-                    @Html.ValidationMessageFor(model => model.ContentFile, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", @rows = "6" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Tags, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Tags, new { htmlAttributes = new { @class = "form-control", @id = "tags" } })
+                    @Html.ValidationMessageFor(model => model.Tags, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.ContentFile, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.ContentFile, new { type = "file", accept = ".mp3,.mp4,.docx,.txt,.doc,.ogg,.webm" })
+                        @Html.ValidationMessageFor(model => model.ContentFile, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-success" />
                 </div>
             </div>
         </div>
+    }
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-success" />
-            </div>
-        </div>
+    <div>
+        @Html.ActionLink("Back to List", "List", null, new { @class = "btn btn-primary btn-xs" })
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "List", null, new { @class = "btn btn-primary btn-xs" })
 </div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/autocoomplete")
+    <link rel="stylesheet" href="~/Content/jquery-ui.css">
+    <script>
+        Autocomplete('@ViewBag.AllTags');
+    </script>
 }
-    </div>
 

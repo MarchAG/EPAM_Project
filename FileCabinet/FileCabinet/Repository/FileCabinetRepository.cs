@@ -123,5 +123,34 @@ namespace FileCabinet.Repository
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+
+        public IQueryable<Tag> GetAllTags
+        {
+            get { return context.Tags; }
+        }
+
+        public void AddTag(Tag entity)
+        {
+            context.Tags.Add(entity);
+            SaveChanges();
+        }
+
+        public void DeleteTag(Tag entity)
+        {
+            context.Tags.Remove(entity);
+            SaveChanges();
+        }
+
+        public void UpdateTag(Tag entity)
+        {
+            context.Entry(entity).State = EntityState.Modified;
+            SaveChanges();
+        }
+
+        public Tag FindTagById(int id)
+        {
+            return context.Tags.Find(id);
+        }
     }
 }

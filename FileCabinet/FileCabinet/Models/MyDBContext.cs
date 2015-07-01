@@ -20,7 +20,7 @@ namespace FileCabinet.Models
         public virtual DbSet<Article> Articles { get; set; }
         public virtual DbSet<UserProfile> Users { get; set; }
         public virtual DbSet<Mark> Marks { get; set; }
-
+        public virtual DbSet<Tag> Tags { get; set; }
 
     }
 }

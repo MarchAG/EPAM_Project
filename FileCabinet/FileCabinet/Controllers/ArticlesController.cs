@@ -58,10 +58,10 @@ namespace FileCabinet.Controllers
                     //.Union(articlesViewModel.Articles.Where(x => x.Description.Contains(searchString))));
                 articlesViewModel.Info.TotalArticles = articlesViewModel.Articles.Count();
             }
-            if(!String.IsNullOrEmpty(tag))
+            if (!String.IsNullOrEmpty(tag))
             {
                 articlesViewModel.Articles = repository.GetAllArticles
-                    .Where(x => x.Tags.Contains(tag));
+                    .Where(x => x.Tags.Any(y => y.Value == tag));
                 articlesViewModel.Info.TotalArticles = articlesViewModel.Articles.Count();
 
             }
@@ -89,6 +89,8 @@ namespace FileCabinet.Controllers
         [Authorize]
         public ActionResult Create()
         {
+            ViewBag.AllTags = string.Join(" ", repository.GetAllTags.Select(x => x.Value));
+
             return View();
         }
 
@@ -99,10 +101,14 @@ namespace FileCabinet.Controllers
         {
             createArt.Title = Sanitizer.GetSafeHtmlFragment(createArt.Title);
             createArt.Description = Sanitizer.GetSafeHtmlFragment(createArt.Description);
+            createArt.Tags = Sanitizer.GetSafeHtmlFragment(createArt.Tags);
+
+            ViewBag.AllTags = string.Join(" ", repository.GetAllTags.Select(x => x.Value));
 
             int type =  -2;
             if (ModelState.IsValid && (type = createArt.GetFileType()) != -1)
             {
+                var tags = createArt.Tags.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 var article = new Article
                 {
                     DateOfPublication = DateTime.Now.ToString(),
@@ -111,8 +117,18 @@ namespace FileCabinet.Controllers
                     ContentType = (ContentFileType)type,
                     Description = createArt.Description,
                     Title = createArt.Title,
-                    Tags = createArt.Tags
+                    Tags = new List<Tag>()
                 };
+                foreach(var item in tags)
+                {
+                    Tag tag = repository.GetAllTags.FirstOrDefault(x => x.Value == item);
+                    if (tag == null)
+                    {
+                        tag = new Tag { Value = item };
+                        repository.AddTag(tag);
+                    }
+                    article.Tags.Add(tag);
+                }
                 string path = AppDomain.CurrentDomain.BaseDirectory + "UploadedFiles/";
                 if (article.FileName != null) 
                     createArt.ContentFile.SaveAs(Path.Combine(path, article.FileName));
@@ -137,25 +153,56 @@ namespace FileCabinet.Controllers
             }
             if (article.UserProfileId != WebSecurity.CurrentUserId)
                 return RedirectToAction("List");
-            return View(article);
+            EditArticleViewModel editArticle = new EditArticleViewModel()
+            {
+                Id = (int)id,
+                Title = article.Title,
+                Description = article.Description
+            };
+            foreach(var tag in article.Tags)
+            {
+                editArticle.Tags += tag.Value + " ";
+            }
+
+            ViewBag.AllTags = string.Join(" ", repository.GetAllTags.Select(x => x.Value));
+
+            return View(editArticle);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ValidateInput(false)]
-        public ActionResult Edit(Article article)
+        public ActionResult Edit(EditArticleViewModel editArticle)
         {
-            article.Description = Sanitizer.GetSafeHtmlFragment(article.Description);
-            article.Title = Sanitizer.GetSafeHtmlFragment(article.Title);
+            editArticle.Description = Sanitizer.GetSafeHtmlFragment(editArticle.Description);
+            editArticle.Title = Sanitizer.GetSafeHtmlFragment(editArticle.Title);
+            editArticle.Tags = Sanitizer.GetSafeHtmlFragment(editArticle.Tags);
+
+            ViewBag.AllTags = string.Join(" ", repository.GetAllTags.Select(x => x.Value));
 
             if (ModelState.IsValid)
             {
+                Article article = repository.FindArticleById(editArticle.Id);
+                article.Title = editArticle.Title;
+                article.Description = editArticle.Description;
+                var tagsString = editArticle.Tags.Split(new char[]{' '},StringSplitOptions.RemoveEmptyEntries).Distinct();
+                article.Tags.Clear();
+                foreach (var item in tagsString)
+                {
+                    var tag = repository.GetAllTags.FirstOrDefault(x => x.Value == item);
+                    if(tag == null)
+                    {
+                        tag = new Tag { Value = item };
+                        repository.AddTag(tag);
+                    }
+                    article.Tags.Add(tag);
+                }
                 repository.UpdateArticle(article);
                 return RedirectToAction("List");
             }
 
-            return View(article);
+            return View(editArticle);
         }
 
         public ActionResult Delete(int? id)

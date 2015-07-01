@@ -1,5 +1,7 @@
 ﻿using FileCabinet.Controllers;
+using FileCabinet.Repository;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,8 @@ namespace FileCabinet.Tests.Controllers
         [TestMethod]
         public void NavigationShow()
         {
-            NavigationController controller = new NavigationController();
+            Mock<IRepository> mock = new Mock<IRepository>();
+            NavigationController controller = new NavigationController(mock.Object);
             PartialViewResult result = controller.Menu() as PartialViewResult;
             Assert.IsNotNull(result);
         }

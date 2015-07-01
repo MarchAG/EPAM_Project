@@ -27,5 +27,11 @@ namespace FileCabinet.Repository
         void DeleteRangeMark(IEnumerable<Mark> entity);
         void UpdateMark(Mark entity);
         Mark FindMarkById(int id);
+
+        IQueryable<Tag> GetAllTags { get; }
+        void AddTag(Tag entity);
+        void DeleteTag(Tag entity);
+        void UpdateTag(Tag entity);
+        Tag FindTagById(int id);
     }
 }
